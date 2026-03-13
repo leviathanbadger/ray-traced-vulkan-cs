@@ -1,10 +1,77 @@
-using RayTutorial.Rendering;
+using System.Collections.Concurrent;
+using RayTutorial.Domain;
+using RayTutorial.Scene;
 
 namespace RayTutorial.Rendering.Vulkan;
 
-public sealed class VulkanRendererBackend
+public sealed class VulkanRendererBackend : IRenderer
 {
+    private readonly ConcurrentDictionary<string, ViewportSize> attachedViewports = new();
+    private SceneDescriptor? loadedScene;
+    private bool initialized;
+
     public const string BackendName = "Vulkan";
 
-    public static Type RendererContract => typeof(IRenderer);
+    public string Name => BackendName;
+
+    public IReadOnlyCollection<AovKind> SupportedAovs { get; } =
+    [
+        AovKind.Beauty,
+        AovKind.Albedo,
+        AovKind.Normal,
+        AovKind.Depth,
+        AovKind.InstanceId,
+        AovKind.Variance
+    ];
+
+    public async ValueTask InitializeAsync(CancellationToken cancellationToken)
+    {
+        if (initialized)
+        {
+            return;
+        }
+
+        await Task.Run(async () =>
+        {
+            await Task.Delay(120, cancellationToken);
+            initialized = true;
+        }, cancellationToken);
+    }
+
+    public async ValueTask AttachViewportAsync(string viewportId, ViewportSize viewportSize, CancellationToken cancellationToken)
+    {
+        await InitializeAsync(cancellationToken);
+        await Task.Run(() => attachedViewports[viewportId] = viewportSize, cancellationToken);
+    }
+
+    public async ValueTask ResizeViewportAsync(string viewportId, ViewportSize viewportSize, CancellationToken cancellationToken)
+    {
+        await Task.Run(() => attachedViewports[viewportId] = viewportSize, cancellationToken);
+    }
+
+    public async ValueTask<RenderFrameResult> RenderFrameAsync(string viewportId, CancellationToken cancellationToken)
+    {
+        return await Task.Run(async () =>
+        {
+            await Task.Delay(16, cancellationToken);
+
+            attachedViewports.TryGetValue(viewportId, out var viewportSize);
+            var loadedSceneName = loadedScene?.DisplayName ?? "No scene loaded";
+
+            return new RenderFrameResult(
+                viewportId,
+                "Renderer Frame Ready",
+                $"{BackendName} placeholder frame for {viewportId} at {viewportSize.Width}x{viewportSize.Height} using {loadedSceneName}.");
+        }, cancellationToken);
+    }
+
+    public async ValueTask DetachViewportAsync(string viewportId, CancellationToken cancellationToken)
+    {
+        await Task.Run(() => attachedViewports.TryRemove(viewportId, out _), cancellationToken);
+    }
+
+    public void LoadScene(SceneDescriptor scene)
+    {
+        loadedScene = scene;
+    }
 }
