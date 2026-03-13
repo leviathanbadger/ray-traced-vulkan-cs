@@ -1,6 +1,7 @@
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Platform;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using RayTutorial.Rendering;
@@ -68,7 +69,7 @@ public sealed partial class ViewportHost : UserControl, IDisposable
 
         try
         {
-            var status = await HostService.AttachAsync(ViewportId, GetViewportSize(), initializationCancellation.Token);
+            var status = await HostService.AttachAsync(ViewportId, GetSurfaceDescriptor(), initializationCancellation.Token);
             StatusTitle = status.Title;
             StatusDetail = status.Detail;
             StartRenderLoop();
@@ -118,7 +119,7 @@ public sealed partial class ViewportHost : UserControl, IDisposable
 
         try
         {
-            var status = await HostService.ResizeAsync(ViewportId, GetViewportSize(), initializationCancellation.Token);
+            var status = await HostService.ResizeAsync(ViewportId, GetSurfaceDescriptor(), initializationCancellation.Token);
             StatusTitle = status.Title;
             StatusDetail = status.Detail;
         }
@@ -183,5 +184,22 @@ public sealed partial class ViewportHost : UserControl, IDisposable
         var width = Math.Max(1, (int)Bounds.Width);
         var height = Math.Max(1, (int)Bounds.Height);
         return new ViewportSize(width, height);
+    }
+
+    private NativeSurfaceDescriptor GetSurfaceDescriptor()
+    {
+        var viewportSize = GetViewportSize();
+        var topLevel = TopLevel.GetTopLevel(this);
+        var platformHandle = topLevel?.TryGetPlatformHandle();
+        var handle = platformHandle?.Handle ?? 0;
+        var handleKind = platformHandle?.HandleDescriptor ?? "unknown";
+
+        var bounds = new ViewportBounds(
+            (int)Bounds.X,
+            (int)Bounds.Y,
+            viewportSize.Width,
+            viewportSize.Height);
+
+        return new NativeSurfaceDescriptor(handle, handleKind, bounds, viewportSize);
     }
 }

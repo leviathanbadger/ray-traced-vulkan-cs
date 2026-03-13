@@ -1,13 +1,14 @@
 using System.ComponentModel;
 using RayTutorial.Domain;
+using RayTutorial.Rendering;
 
 namespace RayTutorial.Lab;
 
-public interface ILabState : INotifyPropertyChanged
+public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 {
     string SelectedLessonId { get; set; }
 
-    string SelectedSceneId { get; set; }
+    new string SelectedSceneId { get; set; }
 
     string SelectedLayoutName { get; set; }
 
