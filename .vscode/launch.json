@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch RayTutorial.App",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build RayTutorial.App",
+      "program": "${workspaceFolder}/src/RayTutorial.App/bin/Debug/net10.0/RayTutorial.App.dll",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
+  ]
+}
