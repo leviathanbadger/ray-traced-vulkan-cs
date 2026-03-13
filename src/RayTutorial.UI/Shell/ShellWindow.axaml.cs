@@ -8,5 +8,6 @@ public sealed partial class ShellWindow : Window
     {
         DataContext = new ShellViewModel();
         InitializeComponent();
+        Opened += (_, _) => WindowsChrome.TryApply(this);
     }
 }
