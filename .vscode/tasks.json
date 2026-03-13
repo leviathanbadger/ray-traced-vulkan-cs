@@ -23,7 +23,7 @@
       "command": "bash",
       "args": [
         "-lc",
-        "WIN_REPO=$(wslpath -w \"$PWD\"); powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location \\\"$WIN_REPO\\\"; & \\\"C:\\\\Program Files\\\\dotnet\\\\dotnet.exe\\\" build \\\".\\\\src\\\\RayTutorial.App\\\\RayTutorial.App.csproj\\\" -p:BaseIntermediateOutputPath=obj-win\\\\ -p:BaseOutputPath=bin-win\\\\ /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary\""
+        "WIN_REPO=$(wslpath -w \"$PWD\"); powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location \\\"$WIN_REPO\\\"; & \\\"C:\\\\Program Files\\\\dotnet\\\\dotnet.exe\\\" build \\\".\\\\src\\\\RayTutorial.App\\\\RayTutorial.App.csproj\\\" -p:BaseIntermediateOutputPath=..\\\\..\\\\.artifacts\\\\win\\\\obj\\\\ -p:BaseOutputPath=..\\\\..\\\\.artifacts\\\\win\\\\bin\\\\ /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary\""
       ],
       "problemMatcher": "$msCompile",
       "presentation": {
