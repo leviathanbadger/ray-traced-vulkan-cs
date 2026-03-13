@@ -12,7 +12,9 @@
 [Rr]elease/
 x64/
 [Bb]in/
+[Bb]in-win/
 [Oo]bj/
+[Oo]bj-win/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
