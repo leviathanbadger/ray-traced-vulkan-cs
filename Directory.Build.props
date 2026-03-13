@@ -10,5 +10,6 @@
     <Company>Ray Tutorial</Company>
     <Product>RayTutorial</Product>
     <RepositoryUrl>https://example.invalid/raytutorial</RepositoryUrl>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/bin-win/**;**/obj-win/**</DefaultItemExcludes>
   </PropertyGroup>
 </Project>
