@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <Authors>OpenAI Codex and repository contributors</Authors>
+    <Company>Ray Tutorial</Company>
+    <Product>RayTutorial</Product>
+    <RepositoryUrl>https://example.invalid/raytutorial</RepositoryUrl>
+  </PropertyGroup>
+</Project>

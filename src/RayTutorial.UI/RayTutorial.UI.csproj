@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\RayTutorial.Domain\RayTutorial.Domain.csproj" />
+    <ProjectReference Include="..\RayTutorial.Lessons\RayTutorial.Lessons.csproj" />
+    <ProjectReference Include="..\RayTutorial.Lab\RayTutorial.Lab.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

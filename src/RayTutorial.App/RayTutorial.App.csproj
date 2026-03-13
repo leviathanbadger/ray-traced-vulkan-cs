@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\RayTutorial.UI\RayTutorial.UI.csproj" />
+    <ProjectReference Include="..\RayTutorial.Lessons\RayTutorial.Lessons.csproj" />
+    <ProjectReference Include="..\RayTutorial.Lab\RayTutorial.Lab.csproj" />
+    <ProjectReference Include="..\RayTutorial.Domain\RayTutorial.Domain.csproj" />
+    <ProjectReference Include="..\RayTutorial.Scene\RayTutorial.Scene.csproj" />
+    <ProjectReference Include="..\RayTutorial.Assets\RayTutorial.Assets.csproj" />
+    <ProjectReference Include="..\RayTutorial.Rendering\RayTutorial.Rendering.csproj" />
+    <ProjectReference Include="..\RayTutorial.Rendering.Vulkan\RayTutorial.Rendering.Vulkan.csproj" />
+    <ProjectReference Include="..\RayTutorial.Rendering.PathTracing\RayTutorial.Rendering.PathTracing.csproj" />
+    <ProjectReference Include="..\RayTutorial.Rendering.Debug\RayTutorial.Rendering.Debug.csproj" />
+    <ProjectReference Include="..\RayTutorial.Shaders\RayTutorial.Shaders.csproj" />
+    <ProjectReference Include="..\RayTutorial.Infrastructure\RayTutorial.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

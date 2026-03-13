@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RayTutorial.App/RayTutorial.App.csproj" />
+    <Project Path="src/RayTutorial.Assets/RayTutorial.Assets.csproj" />
+    <Project Path="src/RayTutorial.Domain/RayTutorial.Domain.csproj" />
+    <Project Path="src/RayTutorial.Infrastructure/RayTutorial.Infrastructure.csproj" />
+    <Project Path="src/RayTutorial.Lab/RayTutorial.Lab.csproj" />
+    <Project Path="src/RayTutorial.Lessons/RayTutorial.Lessons.csproj" />
+    <Project Path="src/RayTutorial.Rendering.Debug/RayTutorial.Rendering.Debug.csproj" />
+    <Project Path="src/RayTutorial.Rendering.PathTracing/RayTutorial.Rendering.PathTracing.csproj" />
+    <Project Path="src/RayTutorial.Rendering.Vulkan/RayTutorial.Rendering.Vulkan.csproj" />
+    <Project Path="src/RayTutorial.Rendering/RayTutorial.Rendering.csproj" />
+    <Project Path="src/RayTutorial.Scene/RayTutorial.Scene.csproj" />
+    <Project Path="src/RayTutorial.Shaders/RayTutorial.Shaders.csproj" />
+    <Project Path="src/RayTutorial.UI/RayTutorial.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RayTutorial.Tests.Integration/RayTutorial.Tests.Integration.csproj" />
+    <Project Path="tests/RayTutorial.Tests.Unit/RayTutorial.Tests.Unit.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/RayTutorial.Tools.AssetPrep/RayTutorial.Tools.AssetPrep.csproj" />
+    <Project Path="tools/RayTutorial.Tools.ShaderBuild/RayTutorial.Tools.ShaderBuild.csproj" />
+  </Folder>
+</Solution>
