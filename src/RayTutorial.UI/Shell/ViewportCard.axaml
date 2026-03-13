@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="RayTutorial.UI.Shell.ViewportCard"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="Root">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
+    <TextBlock Classes="viewportTitle" Text="{Binding Title, ElementName=Root}" />
+    <TextBlock Grid.Row="1" Classes="viewportSubtitle" Text="{Binding Subtitle, ElementName=Root}" />
+    <Border Grid.Row="2" Classes="viewportSurface">
+      <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+          <TextBlock Text="Viewport Placeholder" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold" />
+          <TextBlock Width="260" Text="{Binding Body, ElementName=Root}" TextAlignment="Center" TextWrapping="Wrap" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+      <Border Classes="miniChip">
+        <TextBlock Text="Camera Linked" />
+      </Border>
+      <Border Grid.Column="1" Classes="miniChip">
+        <TextBlock Text="AOV Ready" />
+      </Border>
+      <TextBlock Grid.Column="2" HorizontalAlignment="Right" Classes="eyebrow" Text="Vulkan surface pending" />
+    </Grid>
+  </Grid>
+</UserControl>

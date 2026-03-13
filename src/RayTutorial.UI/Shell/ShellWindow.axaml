@@ -1,0 +1,234 @@
+<Window
+    x:Class="RayTutorial.UI.Shell.ShellWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shell="clr-namespace:RayTutorial.UI.Shell"
+    xmlns:viewModels="clr-namespace:RayTutorial.UI.Shell"
+    Title="RayTutorial"
+    Width="1640"
+    Height="980"
+    MinWidth="1280"
+    MinHeight="760"
+    x:DataType="viewModels:ShellViewModel"
+    mc:Ignorable="d">
+  <Design.DataContext>
+    <viewModels:ShellViewModel />
+  </Design.DataContext>
+
+  <Grid RowDefinitions="Auto,*,Auto">
+    <Border Classes="topBar" Grid.Row="0">
+      <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto" ColumnSpacing="12">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Classes="eyebrow" Text="Scene" VerticalAlignment="Center" />
+          <ComboBox Width="180" ItemsSource="{Binding SceneOptions}" SelectedItem="{Binding SelectedScene}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+          <TextBlock Classes="eyebrow" Text="Layout" VerticalAlignment="Center" />
+          <ComboBox Width="140" ItemsSource="{Binding LayoutOptions}" SelectedItem="{Binding SelectedLayout}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <Button Classes="toolbarButton" Content="Lesson Preset" />
+          <Button Classes="toolbarButton" Content="Compare Raw vs Denoised" />
+          <Button Classes="toolbarButton" Content="Inspect TLAS" />
+        </StackPanel>
+
+        <Border Grid.Column="3" Classes="modeChip">
+          <TextBlock Text="Vulkan RT" />
+        </Border>
+
+        <Border Grid.Column="4" Classes="modeChip">
+          <TextBlock Text="RTX 3090 Baseline" />
+        </Border>
+
+        <Border Grid.Column="5" Classes="modeChip">
+          <TextBlock Text="Y-up RH meters" />
+        </Border>
+
+        <Button Grid.Column="6" Classes="accentButton" Content="Open Capstone Lab" />
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" ColumnDefinitions="280,*,360" RowDefinitions="*">
+      <Border Grid.Column="0" Classes="panel">
+        <Grid RowDefinitions="Auto,Auto,*" RowSpacing="14">
+          <StackPanel Spacing="4">
+            <TextBlock Classes="panelTitle" Text="Lesson Navigator" />
+            <TextBlock Classes="panelSubtitle" Text="Guided modules and scene-linked experiments." />
+          </StackPanel>
+
+          <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+            <Button Classes="toolbarButton" Content="Guided" />
+            <Button Classes="toolbarButton" Content="Reference" />
+            <Button Classes="toolbarButton" Content="Sandbox" />
+          </StackPanel>
+
+          <ListBox Grid.Row="2" ItemsSource="{Binding LessonSummaries}" SelectedItem="{Binding SelectedLesson}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="shell:LessonSummary">
+                <Border Classes="lessonCard">
+                  <StackPanel Spacing="4">
+                    <TextBlock Classes="lessonCardEyebrow" Text="{Binding Module}" />
+                    <TextBlock Classes="lessonCardTitle" Text="{Binding Title}" TextWrapping="Wrap" />
+                    <TextBlock Classes="lessonCardSummary" Text="{Binding Summary}" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Column="1" Margin="18,0" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+          <Border Classes="panel">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Classes="panelTitle" Text="Viewport Grid" />
+              <TextBlock Classes="panelSubtitle" Text="Live render panes and comparisons." />
+            </StackPanel>
+          </Border>
+
+          <Border Grid.Column="1" Classes="panel">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="10">
+              <Button Classes="toolbarButton" Content="1 Pane" />
+              <Button Grid.Column="1" Classes="toolbarButton" Content="2 Pane" />
+              <Button Grid.Column="2" Classes="toolbarButton" Content="4 Pane" />
+              <ComboBox Grid.Column="3" HorizontalAlignment="Right" Width="170" ItemsSource="{Binding AovOptions}" SelectedItem="{Binding SelectedAov}" />
+            </Grid>
+          </Border>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="*,*" ColumnSpacing="14" RowSpacing="14">
+          <Border Classes="viewportPane" Grid.Row="0" Grid.Column="0">
+            <shell:ViewportCard
+                Title="Beauty"
+                Subtitle="Interactive preview"
+                Body="Primary pane for the lesson target state. This will host the Vulkan-backed viewport." />
+          </Border>
+
+          <Border Classes="viewportPane" Grid.Row="0" Grid.Column="1">
+            <shell:ViewportCard
+                Title="Comparison"
+                Subtitle="Preset delta"
+                Body="Secondary pane for A/B comparisons such as low vs high sample count or raw vs denoised output." />
+          </Border>
+
+          <Border Classes="viewportPane" Grid.Row="1" Grid.Column="0">
+            <shell:ViewportCard
+                Title="AOV Inspector"
+                Subtitle="Diagnostic view"
+                Body="Dedicated pane for normals, albedo, variance, instance IDs, and other supporting outputs." />
+          </Border>
+
+          <Border Classes="viewportPane" Grid.Row="1" Grid.Column="1">
+            <shell:ViewportCard
+                Title="Performance Lens"
+                Subtitle="Cost and structure debug"
+                Body="Reserved for traversal cost, BLAS/TLAS overlays, or compact GPU metrics views." />
+          </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Classes="panel">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <StackPanel Spacing="3">
+              <TextBlock Classes="panelTitle" Text="What This Lesson Shows" />
+              <TextBlock
+                  Classes="panelSubtitle"
+                  Text="{Binding ActiveLessonHeadline}"
+                  TextWrapping="Wrap" />
+            </StackPanel>
+            <Button Grid.Column="1" Classes="accentButton" Content="Apply Guided Step" />
+          </Grid>
+        </Border>
+      </Grid>
+
+      <Border Grid.Column="2" Classes="panel">
+        <TabControl>
+          <TabItem Header="Controls">
+            <ScrollViewer>
+              <StackPanel Spacing="16">
+                <ItemsControl ItemsSource="{Binding ControlGroups}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="shell:ControlGroup">
+                      <Border Classes="inspectorCard">
+                        <StackPanel Spacing="10">
+                          <StackPanel Spacing="2">
+                            <TextBlock Classes="panelTitle" Text="{Binding Title}" />
+                            <TextBlock Classes="panelSubtitle" Text="{Binding Summary}" TextWrapping="Wrap" />
+                          </StackPanel>
+
+                          <ItemsControl ItemsSource="{Binding Controls}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate x:DataType="shell:DialDescriptor">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                                  <TextBlock Text="{Binding Label}" />
+                                  <TextBlock Grid.Column="1" Classes="eyebrow" Text="{Binding ValueLabel}" />
+                                  <Slider Grid.Row="1" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding Value}" />
+                                </Grid>
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </StackPanel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+
+          <TabItem Header="Reference">
+            <ScrollViewer>
+              <StackPanel Spacing="16">
+                <Border Classes="inspectorCard">
+                  <StackPanel Spacing="10">
+                    <TextBlock Classes="panelTitle" Text="Current Topic" />
+                    <TextBlock Text="{Binding SelectedLesson.Title}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding SelectedLesson.Summary}" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="inspectorCard">
+                  <StackPanel Spacing="8">
+                    <TextBlock Classes="panelTitle" Text="Try This" />
+                    <TextBlock Text="Apply a preset, switch the AOV pane to variance, then compare 1 spp against 64 spp." TextWrapping="Wrap" />
+                    <Button Classes="accentButton" HorizontalAlignment="Left" Content="Set Up Comparison" />
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="inspectorCard">
+                  <StackPanel Spacing="8">
+                    <TextBlock Classes="panelTitle" Text="Simplification Note" />
+                    <TextBlock Text="{Binding ActiveSimplificationNote}" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="inspectorCard">
+                  <StackPanel Spacing="8">
+                    <TextBlock Classes="panelTitle" Text="Production Context" />
+                    <TextBlock Text="This panel will connect the live experiment to real-time engine practice and high-level offline renderer architecture." TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+        </TabControl>
+      </Border>
+    </Grid>
+
+    <Border Grid.Row="2" Classes="statusBar">
+      <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="16">
+        <TextBlock Text="Frame 16.7 ms" />
+        <TextBlock Text="Accumulation 8 spp" />
+        <TextBlock Text="TLAS 0.4 ms" />
+        <TextBlock HorizontalAlignment="Center" Text="{Binding StatusSummary}" />
+        <TextBlock Grid.Column="4" Text="Scene scale: meters" />
+        <TextBlock Grid.Column="5" Text="Viewport sync: linked" />
+        <TextBlock Grid.Column="6" Text="Lesson mode: guided lab" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

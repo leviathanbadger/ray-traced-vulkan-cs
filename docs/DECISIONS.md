@@ -35,6 +35,14 @@ Reason:
 
 - It satisfies the project requirement and supports clean multi-project solution organization.
 
+### UI Toolkit
+
+- Avalonia is the selected desktop UI toolkit.
+
+Reason:
+
+- It supports Windows and Linux cleanly, works well with the planned workstation-style layout, and keeps the C# desktop stack cohesive.
+
 ### Audience
 
 - The primary audience is graphics programmers.
@@ -73,7 +81,7 @@ Reason:
 
 ## Open Questions for Future Work
 
-- exact UI toolkit and docking approach
+- long-term docking approach beyond the initial shell layout
 - shader authoring toolchain details
 - scene import pipeline details
 - lesson content serialization format

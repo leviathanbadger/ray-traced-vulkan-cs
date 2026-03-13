@@ -8,7 +8,7 @@ The application is intended to teach how ray tracing fits into:
 - offline and VFX-oriented rendering pipelines
 - production renderer architecture at a conceptual level
 
-This repository currently contains the project plan and an initial .NET 10 solution scaffold. Rendering and UI dependencies have not been integrated yet.
+This repository currently contains the project plan, the initial .NET 10 solution scaffold, and a first Avalonia-based desktop shell. The Vulkan renderer is still a placeholder.
 
 ## Goals
 
@@ -52,8 +52,8 @@ Repository-level build files:
 
 ## Near-Term Implementation Priorities
 
-1. Create the multi-project .NET solution and project reference graph.
-2. Build the application shell and docked workstation-style UI.
-3. Stand up the Vulkan renderer foundation and viewport.
-4. Implement lesson metadata, presets, and comparison panes.
-5. Add the first diagnostic scene and core ray visibility lesson.
+1. Replace the viewport placeholders with a real Vulkan host surface.
+2. Connect lesson metadata and preset actions to live shell state.
+3. Stand up the Vulkan renderer foundation and viewport lifecycle.
+4. Add the first diagnostic scene and core ray visibility lesson.
+5. Expand comparison panes into real AOV and metrics views.

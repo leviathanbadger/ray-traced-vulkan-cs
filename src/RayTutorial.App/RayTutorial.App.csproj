@@ -1,5 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\RayTutorial.UI\RayTutorial.UI.csproj" />
     <ProjectReference Include="..\RayTutorial.Lessons\RayTutorial.Lessons.csproj" />
@@ -14,12 +27,4 @@
     <ProjectReference Include="..\RayTutorial.Shaders\RayTutorial.Shaders.csproj" />
     <ProjectReference Include="..\RayTutorial.Infrastructure\RayTutorial.Infrastructure.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
 </Project>
