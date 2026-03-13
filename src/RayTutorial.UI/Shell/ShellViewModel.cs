@@ -10,24 +10,23 @@ namespace RayTutorial.UI.Shell;
 
 public sealed class ShellViewModel : INotifyPropertyChanged
 {
+    private readonly ILabState labState;
     private readonly Dictionary<string, LessonDescriptor> lessonsById;
     private readonly Dictionary<string, SceneDescriptor> scenesById;
     private readonly Dictionary<string, LabPreset> presetsByLessonId;
-    private LessonSummary selectedLesson;
-    private string selectedScene;
-    private string selectedLayout;
-    private string selectedAov;
 
     public ShellViewModel()
-        : this(new TutorialLessonCatalog(), new TutorialSceneCatalog(), new TutorialLabPresetCatalog())
+        : this(new TutorialLessonCatalog(), new TutorialSceneCatalog(), new TutorialLabPresetCatalog(), new LabState())
     {
     }
 
     public ShellViewModel(
         ILessonCatalog lessonCatalog,
         ISceneCatalog sceneCatalog,
-        ILabPresetCatalog presetCatalog)
+        ILabPresetCatalog presetCatalog,
+        ILabState labState)
     {
+        this.labState = labState;
         var lessons = lessonCatalog.GetLessons();
         var scenes = sceneCatalog.GetScenes();
         var presets = presetCatalog.GetPresets();
@@ -77,10 +76,8 @@ public sealed class ShellViewModel : INotifyPropertyChanged
         var startupPreset = presets.Count > 0
             ? presets[0]
             : throw new InvalidOperationException("At least one lab preset is required.");
-        selectedLesson = LessonSummaries.First(summary => summary.Id == startupPreset.LessonId);
-        selectedScene = GetSceneDisplayName(startupPreset.SceneId);
-        selectedLayout = startupPreset.LayoutName;
-        selectedAov = startupPreset.DefaultAov.ToString();
+        labState.ApplyPreset(startupPreset);
+        labState.PropertyChanged += OnLabStatePropertyChanged;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -97,34 +94,50 @@ public sealed class ShellViewModel : INotifyPropertyChanged
 
     public string SelectedScene
     {
-        get => selectedScene;
-        set => SetProperty(ref selectedScene, value);
+        get => labState.SelectedSceneId;
+        set
+        {
+            if (labState.SelectedSceneId != value)
+            {
+                labState.SelectedSceneId = value;
+            }
+        }
     }
 
     public string SelectedLayout
     {
-        get => selectedLayout;
-        set => SetProperty(ref selectedLayout, value);
+        get => labState.SelectedLayoutName;
+        set
+        {
+            if (labState.SelectedLayoutName != value)
+            {
+                labState.SelectedLayoutName = value;
+            }
+        }
     }
 
     public string SelectedAov
     {
-        get => selectedAov;
-        set => SetProperty(ref selectedAov, value);
+        get => labState.SelectedAov.ToString();
+        set
+        {
+            if (Enum.TryParse<AovKind>(value, out var parsedAov) && labState.SelectedAov != parsedAov)
+            {
+                labState.SelectedAov = parsedAov;
+            }
+        }
     }
 
     public LessonSummary SelectedLesson
     {
-        get => selectedLesson;
+        get => LessonSummaries.First(summary => summary.Id == labState.SelectedLessonId);
         set
         {
-            if (!SetProperty(ref selectedLesson, value))
+            if (labState.SelectedLessonId == value.Id)
             {
                 return;
             }
 
-            OnPropertyChanged(nameof(ActiveLessonHeadline));
-            OnPropertyChanged(nameof(ActiveSimplificationNote));
             ApplyLessonDefaults(value.Id);
         }
     }
@@ -136,17 +149,13 @@ public sealed class ShellViewModel : INotifyPropertyChanged
     public string StatusSummary =>
         $"Phase 2 shell scaffold: lesson, scene, and preset catalogs are now wired; rendering and live lab state are next.";
 
-    private LessonDescriptor GetSelectedLesson() => lessonsById[selectedLesson.Id];
+    private LessonDescriptor GetSelectedLesson() => lessonsById[labState.SelectedLessonId];
 
     private void ApplyLessonDefaults(string lessonId)
     {
         var preset = GetPresetForLesson(lessonId);
-        SelectedScene = GetSceneDisplayName(preset.SceneId);
-        SelectedLayout = preset.LayoutName;
-        SelectedAov = preset.DefaultAov.ToString();
+        labState.ApplyPreset(preset);
     }
-
-    private string GetSceneDisplayName(string sceneId) => scenesById[sceneId].DisplayName;
 
     private LabPreset GetPresetForLesson(string lessonId)
     {
@@ -155,16 +164,25 @@ public sealed class ShellViewModel : INotifyPropertyChanged
             : throw new InvalidOperationException($"No preset registered for lesson '{lessonId}'.");
     }
 
-    private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    private void OnLabStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (EqualityComparer<T>.Default.Equals(field, value))
+        switch (e.PropertyName)
         {
-            return false;
+            case nameof(ILabState.SelectedLessonId):
+                OnPropertyChanged(nameof(SelectedLesson));
+                OnPropertyChanged(nameof(ActiveLessonHeadline));
+                OnPropertyChanged(nameof(ActiveSimplificationNote));
+                break;
+            case nameof(ILabState.SelectedSceneId):
+                OnPropertyChanged(nameof(SelectedScene));
+                break;
+            case nameof(ILabState.SelectedLayoutName):
+                OnPropertyChanged(nameof(SelectedLayout));
+                break;
+            case nameof(ILabState.SelectedAov):
+                OnPropertyChanged(nameof(SelectedAov));
+                break;
         }
-
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

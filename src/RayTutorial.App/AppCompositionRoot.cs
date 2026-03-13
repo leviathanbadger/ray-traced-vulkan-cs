@@ -1,5 +1,6 @@
 using RayTutorial.Lab;
 using RayTutorial.Lessons;
+using RayTutorial.Rendering.Vulkan;
 using RayTutorial.Scene;
 using RayTutorial.UI.Shell;
 
@@ -12,8 +13,10 @@ internal sealed class AppCompositionRoot
         var lessonCatalog = new TutorialLessonCatalog();
         var sceneCatalog = new TutorialSceneCatalog();
         var presetCatalog = new TutorialLabPresetCatalog();
+        var labState = new LabState();
+        var viewportHostService = new VulkanViewportHostService();
 
-        var shellViewModel = new ShellViewModel(lessonCatalog, sceneCatalog, presetCatalog);
-        return new ShellWindow(shellViewModel);
+        var shellViewModel = new ShellViewModel(lessonCatalog, sceneCatalog, presetCatalog, labState);
+        return new ShellWindow(shellViewModel, viewportHostService);
     }
 }
