@@ -10,11 +10,6 @@
     <Company>Ray Tutorial</Company>
     <Product>RayTutorial</Product>
     <RepositoryUrl>https://example.invalid/raytutorial</RepositoryUrl>
-    <DefaultItemExcludes>$(DefaultItemExcludes);**/bin-win/**;**/obj-win/**</DefaultItemExcludes>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(WindowsNativeBuild)' == 'true'">
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).artifacts\win\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <BaseOutputPath>$(MSBuildThisFileDirectory).artifacts\win\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/.artifacts/**</DefaultItemExcludes>
   </PropertyGroup>
 </Project>

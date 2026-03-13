@@ -16,21 +16,6 @@
         "kind": "build",
         "isDefault": true
       }
-    },
-    {
-      "label": "build RayTutorial.App (Windows native)",
-      "type": "shell",
-      "command": "bash",
-      "args": [
-        "-lc",
-        "WIN_REPO=$(wslpath -w \"$PWD\"); powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location \\\"$WIN_REPO\\\"; & \\\"C:\\\\Program Files\\\\dotnet\\\\dotnet.exe\\\" build \\\".\\\\src\\\\RayTutorial.App\\\\RayTutorial.App.csproj\\\" -p:WindowsNativeBuild=true /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary\""
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
     }
   ]
 }
