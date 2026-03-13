@@ -14,3 +14,4 @@ public sealed class CoordinateSystemTests
         Assert.Equal(WorldUnit.Meter, convention.Unit);
     }
 }
+

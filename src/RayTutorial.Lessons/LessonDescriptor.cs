@@ -4,6 +4,7 @@ namespace RayTutorial.Lessons;
 
 public sealed record LessonDescriptor(
     string Id,
+    string Module,
     string Title,
     string Summary,
     IReadOnlyList<AovKind> RecommendedAovs,

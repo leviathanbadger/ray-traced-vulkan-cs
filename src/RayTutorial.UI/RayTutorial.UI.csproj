@@ -13,5 +13,6 @@
     <ProjectReference Include="..\RayTutorial.Domain\RayTutorial.Domain.csproj" />
     <ProjectReference Include="..\RayTutorial.Lessons\RayTutorial.Lessons.csproj" />
     <ProjectReference Include="..\RayTutorial.Lab\RayTutorial.Lab.csproj" />
+    <ProjectReference Include="..\RayTutorial.Scene\RayTutorial.Scene.csproj" />
   </ItemGroup>
 </Project>

@@ -1,18 +1,47 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using RayTutorial.Domain;
+using RayTutorial.Lab;
+using RayTutorial.Lessons;
+using RayTutorial.Scene;
 
 namespace RayTutorial.UI.Shell;
 
-public sealed class ShellViewModel
+public sealed class ShellViewModel : INotifyPropertyChanged
 {
+    private readonly Dictionary<string, LessonDescriptor> lessonsById;
+    private readonly Dictionary<string, SceneDescriptor> scenesById;
+    private readonly Dictionary<string, LabPreset> presetsByLessonId;
+    private LessonSummary selectedLesson;
+    private string selectedScene;
+    private string selectedLayout;
+    private string selectedAov;
+
     public ShellViewModel()
+        : this(new TutorialLessonCatalog(), new TutorialSceneCatalog(), new TutorialLabPresetCatalog())
     {
-        LessonSummaries = new ObservableCollection<LessonSummary>
-        {
-            new("Module 1", "Ray Queries and Visibility", "Inspect primary hits, normals, instance IDs, and the data returned by a ray query."),
-            new("Module 2", "Acceleration Structures", "Compare instancing layouts, BLAS/TLAS responsibilities, and the intuition behind traversal cost."),
-            new("Module 5", "From Single Bounce to Path Tracing", "Move from direct lighting into indirect transport, accumulation, and visible noise."),
-            new("Module 9", "Offline and VFX Architecture", "Relate the live renderer to AOV-heavy offline workflows and production tradeoffs.")
-        };
+    }
+
+    public ShellViewModel(
+        ILessonCatalog lessonCatalog,
+        ISceneCatalog sceneCatalog,
+        ILabPresetCatalog presetCatalog)
+    {
+        var lessons = lessonCatalog.GetLessons();
+        var scenes = sceneCatalog.GetScenes();
+        var presets = presetCatalog.GetPresets();
+
+        lessonsById = lessons.ToDictionary(lesson => lesson.Id);
+        scenesById = scenes.ToDictionary(scene => scene.Id);
+        presetsByLessonId = presets.ToDictionary(preset => preset.LessonId);
+
+        LessonSummaries = new ObservableCollection<LessonSummary>(
+            lessons.Select(lesson => new LessonSummary(lesson.Id, lesson.Module, lesson.Title, lesson.Summary)));
+
+        SceneOptions = new ObservableCollection<string>(scenes.Select(scene => scene.DisplayName));
+        LayoutOptions = new ObservableCollection<string>(["Single Pane", "Split View", "Quad View"]);
+        AovOptions = new ObservableCollection<string>(Enum.GetNames<AovKind>());
 
         ControlGroups = new ObservableCollection<ControlGroup>
         {
@@ -45,34 +74,16 @@ public sealed class ShellViewModel
                 })
         };
 
-        SceneOptions = new ObservableCollection<string>
-        {
-            "PrimitiveDiagnostics",
-            "CornellVariant",
-            "GlossyInterior"
-        };
-
-        LayoutOptions = new ObservableCollection<string>
-        {
-            "Single Pane",
-            "Split View",
-            "Quad View"
-        };
-
-        AovOptions = new ObservableCollection<string>
-        {
-            "Beauty",
-            "Normal",
-            "Albedo",
-            "Variance",
-            "InstanceId"
-        };
-
-        SelectedScene = SceneOptions[1];
-        SelectedLayout = LayoutOptions[2];
-        SelectedAov = AovOptions[0];
-        SelectedLesson = LessonSummaries[0];
+        var startupPreset = presets.Count > 0
+            ? presets[0]
+            : throw new InvalidOperationException("At least one lab preset is required.");
+        selectedLesson = LessonSummaries.First(summary => summary.Id == startupPreset.LessonId);
+        selectedScene = GetSceneDisplayName(startupPreset.SceneId);
+        selectedLayout = startupPreset.LayoutName;
+        selectedAov = startupPreset.DefaultAov.ToString();
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public ObservableCollection<string> SceneOptions { get; }
 
@@ -84,25 +95,85 @@ public sealed class ShellViewModel
 
     public ObservableCollection<ControlGroup> ControlGroups { get; }
 
-    public string SelectedScene { get; set; }
+    public string SelectedScene
+    {
+        get => selectedScene;
+        set => SetProperty(ref selectedScene, value);
+    }
 
-    public string SelectedLayout { get; set; }
+    public string SelectedLayout
+    {
+        get => selectedLayout;
+        set => SetProperty(ref selectedLayout, value);
+    }
 
-    public string SelectedAov { get; set; }
+    public string SelectedAov
+    {
+        get => selectedAov;
+        set => SetProperty(ref selectedAov, value);
+    }
 
-    public LessonSummary SelectedLesson { get; set; }
+    public LessonSummary SelectedLesson
+    {
+        get => selectedLesson;
+        set
+        {
+            if (!SetProperty(ref selectedLesson, value))
+            {
+                return;
+            }
 
-    public string ActiveLessonHeadline =>
-        "The shell is structured around guided experiments: select a lesson, load a preset, inspect the resulting AOVs, then compare pane states.";
+            OnPropertyChanged(nameof(ActiveLessonHeadline));
+            OnPropertyChanged(nameof(ActiveSimplificationNote));
+            ApplyLessonDefaults(value.Id);
+        }
+    }
 
-    public string ActiveSimplificationNote =>
-        "Early shell and lesson placeholders flatten a lot of renderer complexity. For example, the eventual Vulkan ray tracing pipeline and shader binding table setup will be represented through guided actions instead of raw low-level state.";
+    public string ActiveLessonHeadline => GetSelectedLesson().Summary;
+
+    public string ActiveSimplificationNote => GetSelectedLesson().SimplificationNotes[0];
 
     public string StatusSummary =>
-        "Phase 2 shell scaffold: UI regions are live placeholders waiting for rendering and lesson-state plumbing.";
+        $"Phase 2 shell scaffold: lesson, scene, and preset catalogs are now wired; rendering and live lab state are next.";
+
+    private LessonDescriptor GetSelectedLesson() => lessonsById[selectedLesson.Id];
+
+    private void ApplyLessonDefaults(string lessonId)
+    {
+        var preset = GetPresetForLesson(lessonId);
+        SelectedScene = GetSceneDisplayName(preset.SceneId);
+        SelectedLayout = preset.LayoutName;
+        SelectedAov = preset.DefaultAov.ToString();
+    }
+
+    private string GetSceneDisplayName(string sceneId) => scenesById[sceneId].DisplayName;
+
+    private LabPreset GetPresetForLesson(string lessonId)
+    {
+        return presetsByLessonId.TryGetValue(lessonId, out var preset)
+            ? preset
+            : throw new InvalidOperationException($"No preset registered for lesson '{lessonId}'.");
+    }
+
+    private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
-public sealed record LessonSummary(string Module, string Title, string Summary);
+public sealed record LessonSummary(string Id, string Module, string Title, string Summary);
 
 public sealed record ControlGroup(string Title, string Summary, ObservableCollection<DialDescriptor> Controls);
 
