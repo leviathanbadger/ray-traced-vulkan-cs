@@ -16,7 +16,7 @@
       "type": "node-terminal",
       "request": "launch",
       "preLaunchTask": "build RayTutorial.App (Windows native)",
-      "command": "bash -lc 'WIN_REPO=$(wslpath -w \"$PWD\"); powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location \\\"$WIN_REPO\\\"; & \\\"$env:ProgramFiles\\\\dotnet\\\\dotnet.exe\\\" \\\".\\\\src\\\\RayTutorial.App\\\\bin-win\\\\Debug\\\\net10.0\\\\RayTutorial.App.dll\\\"\"'"
+      "command": "bash -lc 'WIN_REPO=$(wslpath -w \"$PWD\"); powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location \\\"$WIN_REPO\\\"; & \\\"C:\\\\Program Files\\\\dotnet\\\\dotnet.exe\\\" \\\".\\\\src\\\\RayTutorial.App\\\\bin-win\\\\Debug\\\\net10.0\\\\RayTutorial.App.dll\\\"\"'"
     }
   ]
 }
