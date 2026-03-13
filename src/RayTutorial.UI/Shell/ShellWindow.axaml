@@ -222,9 +222,9 @@
     <Border Grid.Row="2" Classes="statusBar">
       <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="16">
         <TextBlock Text="Frame 16.7 ms" />
-        <TextBlock Text="Accumulation 8 spp" />
-        <TextBlock Text="TLAS 0.4 ms" />
-        <TextBlock HorizontalAlignment="Center" Text="{Binding StatusSummary}" />
+        <TextBlock Grid.Column="1" Text="Accumulation 8 spp" />
+        <TextBlock Grid.Column="2" Text="TLAS 0.4 ms" />
+        <TextBlock Grid.Column="3" HorizontalAlignment="Center" Text="{Binding StatusSummary}" />
         <TextBlock Grid.Column="4" Text="Scene scale: meters" />
         <TextBlock Grid.Column="5" Text="Viewport sync: linked" />
         <TextBlock Grid.Column="6" Text="Lesson mode: guided lab" />
