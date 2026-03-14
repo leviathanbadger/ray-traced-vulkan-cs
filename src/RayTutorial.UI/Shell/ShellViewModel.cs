@@ -40,8 +40,6 @@ public sealed class ShellViewModel : INotifyPropertyChanged
 
         SceneOptions = new ObservableCollection<string>(scenes.Select(scene => scene.DisplayName));
         LayoutOptions = new ObservableCollection<string>(["Single Pane", "Split View", "Quad View"]);
-        AovOptions = new ObservableCollection<string>(Enum.GetNames<AovKind>());
-
         ControlGroups = new ObservableCollection<ControlGroup>
         {
             new(
@@ -86,8 +84,6 @@ public sealed class ShellViewModel : INotifyPropertyChanged
 
     public ObservableCollection<string> LayoutOptions { get; }
 
-    public ObservableCollection<string> AovOptions { get; }
-
     public ObservableCollection<LessonSummary> LessonSummaries { get; }
 
     public ObservableCollection<ControlGroup> ControlGroups { get; }
@@ -112,18 +108,6 @@ public sealed class ShellViewModel : INotifyPropertyChanged
             if (labState.SelectedLayoutName != value)
             {
                 labState.SelectedLayoutName = value;
-            }
-        }
-    }
-
-    public string SelectedAov
-    {
-        get => labState.SelectedAov.ToString();
-        set
-        {
-            if (Enum.TryParse<AovKind>(value, out var parsedAov) && labState.SelectedAov != parsedAov)
-            {
-                labState.SelectedAov = parsedAov;
             }
         }
     }
@@ -178,9 +162,6 @@ public sealed class ShellViewModel : INotifyPropertyChanged
                 break;
             case nameof(ILabState.SelectedLayoutName):
                 OnPropertyChanged(nameof(SelectedLayout));
-                break;
-            case nameof(ILabState.SelectedAov):
-                OnPropertyChanged(nameof(SelectedAov));
                 break;
         }
     }

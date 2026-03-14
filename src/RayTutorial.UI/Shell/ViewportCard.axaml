@@ -4,21 +4,45 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:shell="clr-namespace:RayTutorial.UI.Shell"
     x:Name="Root">
-  <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
-    <TextBlock Classes="viewportTitle" Text="{Binding Title, ElementName=Root}" />
-    <TextBlock Grid.Row="1" Classes="viewportSubtitle" Text="{Binding Subtitle, ElementName=Root}" />
-    <Border Grid.Row="2" Classes="viewportSurface">
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+      <StackPanel Spacing="2">
+        <TextBlock Classes="viewportTitle" Text="{Binding Title, ElementName=Root}" />
+        <TextBlock Classes="viewportSubtitle" Text="{Binding Subtitle, ElementName=Root}" />
+      </StackPanel>
+
+      <ComboBox
+          Grid.Column="1"
+          Width="130"
+          ItemsSource="{Binding AovOptions, ElementName=Root}"
+          SelectedItem="{Binding SelectedAov, ElementName=Root}" />
+
+      <Button Grid.Column="2" Classes="toolbarButton" Content="Actions">
+        <Button.Flyout>
+          <Flyout Placement="BottomEdgeAlignedRight">
+            <StackPanel MinWidth="220" Spacing="8">
+              <TextBlock Classes="eyebrow" Text="Viewport Actions" />
+              <Button Classes="toolbarButton" Content="Compare Raw vs Denoised" />
+              <Button Classes="toolbarButton" Content="Inspect TLAS" />
+              <Button Classes="toolbarButton" Content="Clone to New Surface" />
+            </StackPanel>
+          </Flyout>
+        </Button.Flyout>
+      </Button>
+    </Grid>
+
+    <Border Grid.Row="1" Classes="viewportSurface">
       <shell:ViewportHost
           ViewportId="{Binding ViewId, ElementName=Root}"
           RenderSurfaceId="{Binding RenderSurfaceId, ElementName=Root}"
           HostService="{Binding HostService, ElementName=Root}" />
     </Border>
-    <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+    <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
       <Border Classes="miniChip">
         <TextBlock Text="Camera Linked" />
       </Border>
       <Border Grid.Column="1" Classes="miniChip">
-        <TextBlock Text="AOV Ready" />
+        <TextBlock Text="{Binding SelectedAov, ElementName=Root}" />
       </Border>
       <TextBlock Grid.Column="2" HorizontalAlignment="Right" Classes="eyebrow" Text="{Binding Body, ElementName=Root}" />
     </Grid>

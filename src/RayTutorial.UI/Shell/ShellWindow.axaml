@@ -19,36 +19,29 @@
 
   <Grid RowDefinitions="Auto,*,Auto">
     <Border Classes="topBar" Grid.Row="0">
-      <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto" ColumnSpacing="12">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto" ColumnSpacing="12">
         <StackPanel Orientation="Horizontal" Spacing="8">
           <TextBlock Classes="eyebrow" Text="Scene" VerticalAlignment="Center" />
           <ComboBox Width="180" ItemsSource="{Binding SceneOptions}" SelectedItem="{Binding SelectedScene}" />
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-          <TextBlock Classes="eyebrow" Text="Layout" VerticalAlignment="Center" />
-          <ComboBox Width="140" ItemsSource="{Binding LayoutOptions}" SelectedItem="{Binding SelectedLayout}" />
-        </StackPanel>
-
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
           <Button Classes="toolbarButton" Content="Lesson Preset" />
-          <Button Classes="toolbarButton" Content="Compare Raw vs Denoised" />
-          <Button Classes="toolbarButton" Content="Inspect TLAS" />
         </StackPanel>
 
-        <Border Grid.Column="3" Classes="modeChip">
+        <Border Grid.Column="2" Classes="modeChip">
           <TextBlock Text="Vulkan RT" />
         </Border>
 
-        <Border Grid.Column="4" Classes="modeChip">
+        <Border Grid.Column="3" Classes="modeChip">
           <TextBlock Text="RTX 3090 Baseline" />
         </Border>
 
-        <Border Grid.Column="5" Classes="modeChip">
+        <Border Grid.Column="4" Classes="modeChip">
           <TextBlock Text="Y-up RH meters" />
         </Border>
 
-        <Button Grid.Column="6" Classes="accentButton" Content="Open Capstone Lab" />
+        <Button Grid.Column="5" Classes="accentButton" Content="Open Capstone Lab" />
       </Grid>
     </Border>
 
@@ -83,23 +76,13 @@
       </Border>
 
       <Grid Grid.Column="1" Margin="18,0" RowDefinitions="Auto,*,Auto" RowSpacing="14">
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-          <Border Classes="panel">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <TextBlock Classes="panelTitle" Text="Viewport Grid" />
-              <TextBlock Classes="panelSubtitle" Text="Live render panes and comparisons." />
-            </StackPanel>
-          </Border>
-
-          <Border Grid.Column="1" Classes="panel">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="10">
-              <Button Classes="toolbarButton" Content="1 Pane" />
-              <Button Grid.Column="1" Classes="toolbarButton" Content="2 Pane" />
-              <Button Grid.Column="2" Classes="toolbarButton" Content="4 Pane" />
-              <ComboBox Grid.Column="3" HorizontalAlignment="Right" Width="170" ItemsSource="{Binding AovOptions}" SelectedItem="{Binding SelectedAov}" />
-            </Grid>
-          </Border>
-        </Grid>
+        <Border Classes="panel">
+          <Grid ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="10">
+            <Button Classes="toolbarButton" Content="1 Pane" />
+            <Button Grid.Column="1" Classes="toolbarButton" Content="2 Pane" />
+            <Button Grid.Column="2" Classes="toolbarButton" Content="4 Pane" />
+          </Grid>
+        </Border>
 
         <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="*,*" ColumnSpacing="14" RowSpacing="14">
           <Border Classes="viewportPane" Grid.Row="0" Grid.Column="0">
@@ -109,6 +92,7 @@
                 Subtitle="Interactive preview"
                 ViewId="beauty"
                 RenderSurfaceId="lesson-main"
+                SelectedAov="Beauty"
                 Body="Primary pane for the lesson target state. This will host the Vulkan-backed viewport." />
           </Border>
 
@@ -119,6 +103,7 @@
                 Subtitle="Preset delta"
                 ViewId="comparison"
                 RenderSurfaceId="lesson-main"
+                SelectedAov="Beauty"
                 Body="Secondary pane for A/B comparisons such as low vs high sample count or raw vs denoised output." />
           </Border>
 
@@ -129,6 +114,7 @@
                 Subtitle="Diagnostic view"
                 ViewId="aov-inspector"
                 RenderSurfaceId="lesson-main"
+                SelectedAov="Variance"
                 Body="Dedicated pane for normals, albedo, variance, instance IDs, and other supporting outputs." />
           </Border>
 
@@ -139,6 +125,7 @@
                 Subtitle="Cost and structure debug"
                 ViewId="performance-lens"
                 RenderSurfaceId="lesson-main"
+                SelectedAov="InstanceId"
                 Body="Reserved for traversal cost, BLAS/TLAS overlays, or compact GPU metrics views." />
           </Border>
         </Grid>

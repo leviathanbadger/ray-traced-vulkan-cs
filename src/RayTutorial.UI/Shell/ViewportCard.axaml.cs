@@ -1,11 +1,21 @@
 using Avalonia;
 using Avalonia.Controls;
 using RayTutorial.Rendering;
+using System.Collections.Generic;
 
 namespace RayTutorial.UI.Shell;
 
 public sealed partial class ViewportCard : UserControl
 {
+    private static readonly IReadOnlyList<string> DefaultAovOptions =
+    [
+        "Beauty",
+        "Normal",
+        "Albedo",
+        "Variance",
+        "InstanceId"
+    ];
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(Title), string.Empty);
 
@@ -23,6 +33,12 @@ public sealed partial class ViewportCard : UserControl
 
     public static readonly StyledProperty<string> RenderSurfaceIdProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(RenderSurfaceId), "lesson-main");
+
+    public static readonly StyledProperty<IReadOnlyList<string>> AovOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(AovOptions), DefaultAovOptions);
+
+    public static readonly StyledProperty<string> SelectedAovProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedAov), "Beauty");
 
     public ViewportCard()
     {
@@ -63,5 +79,17 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(RenderSurfaceIdProperty);
         set => SetValue(RenderSurfaceIdProperty, value);
+    }
+
+    public IReadOnlyList<string> AovOptions
+    {
+        get => GetValue(AovOptionsProperty);
+        set => SetValue(AovOptionsProperty, value);
+    }
+
+    public string SelectedAov
+    {
+        get => GetValue(SelectedAovProperty);
+        set => SetValue(SelectedAovProperty, value);
     }
 }
