@@ -19,6 +19,6 @@ internal sealed class AppCompositionRoot
         IViewportHostService viewportHostService = new VulkanViewportHostService(renderer, labState, sceneCatalog);
 
         var shellViewModel = new ShellViewModel(lessonCatalog, sceneCatalog, presetCatalog, labState);
-        return new ShellWindow(shellViewModel, viewportHostService);
+        return new ShellWindow(shellViewModel, labState, viewportHostService);
     }
 }

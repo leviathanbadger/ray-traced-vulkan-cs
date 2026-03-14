@@ -12,6 +12,7 @@
       </StackPanel>
 
       <ComboBox
+          x:Name="AovSelector"
           Grid.Column="1"
           Width="130"
           ItemsSource="{Binding AovOptions, ElementName=Root}"
@@ -22,9 +23,9 @@
           <Flyout Placement="BottomEdgeAlignedRight">
             <StackPanel MinWidth="220" Spacing="8">
               <TextBlock Classes="eyebrow" Text="Viewport Actions" />
-              <Button Classes="toolbarButton" Content="Compare Raw vs Denoised" />
-              <Button Classes="toolbarButton" Content="Inspect TLAS" />
-              <Button Classes="toolbarButton" Content="Clone to New Surface" />
+              <Button x:Name="CompareActionButton" Classes="toolbarButton" Content="Compare Raw vs Denoised" />
+              <Button x:Name="InspectTlasActionButton" Classes="toolbarButton" Content="Inspect TLAS" />
+              <Button x:Name="CloneSurfaceActionButton" Classes="toolbarButton" Content="Clone to New Surface" />
             </StackPanel>
           </Flyout>
         </Button.Flyout>

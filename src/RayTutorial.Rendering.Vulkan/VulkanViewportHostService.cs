@@ -62,7 +62,7 @@ public sealed class VulkanViewportHostService : IViewportHostService
 
     private async void OnLabStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(ISceneSelectionState.SelectedSceneId))
+        if (e.PropertyName is not (nameof(ISceneSelectionState.SelectedSceneId) or "RenderSurfaces" or "RenderOutlets" or nameof(ISceneSelectionState.SharedRenderResolution)))
         {
             return;
         }
@@ -88,9 +88,7 @@ public sealed class VulkanViewportHostService : IViewportHostService
             }
 
             await renderer.LoadSceneAsync(scene, cancellationToken);
-            await renderer.ConfigureRenderSurfaceAsync(
-                new RenderSurfaceDescriptor(surfaceId, sceneSelectionState.SelectedSceneId, sceneSelectionState.SharedRenderResolution),
-                cancellationToken);
+            await renderer.ConfigureRenderSurfaceAsync(sceneSelectionState.GetRenderSurfaceDescriptor(surfaceId), cancellationToken);
         }
         finally
         {

@@ -9,4 +9,6 @@ public interface ISceneSelectionState : INotifyPropertyChanged
     RenderResolution SharedRenderResolution { get; }
 
     string GetRenderSurfaceId(string outletId);
+
+    RenderSurfaceDescriptor GetRenderSurfaceDescriptor(string surfaceId);
 }

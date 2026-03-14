@@ -43,7 +43,15 @@ public sealed partial class ViewportCard : UserControl
     public ViewportCard()
     {
         InitializeComponent();
+        AovSelector.SelectionChanged += (_, _) => SelectedAovChanged?.Invoke(this, EventArgs.Empty);
+        CompareActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "compare-raw-vs-denoised"));
+        InspectTlasActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "inspect-tlas"));
+        CloneSurfaceActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "clone-surface"));
     }
+
+    public event EventHandler? SelectedAovChanged;
+
+    public event EventHandler<ViewportActionRequestedEventArgs>? ActionRequested;
 
     public string Title
     {

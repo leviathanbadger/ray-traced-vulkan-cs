@@ -14,5 +14,15 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 
     AovKind SelectedAov { get; set; }
 
+    IReadOnlyCollection<RenderSurfaceState> RenderSurfaces { get; }
+
+    IReadOnlyCollection<RenderOutletState> RenderOutlets { get; }
+
     void ApplyPreset(LabPreset preset);
+
+    AovKind GetSelectedAov(string outletId);
+
+    void SetSelectedAov(string outletId, AovKind aov);
+
+    void ForkSurfaceForOutlet(string outletId, string forkReason);
 }
