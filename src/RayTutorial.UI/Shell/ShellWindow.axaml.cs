@@ -58,6 +58,8 @@ public sealed partial class ShellWindow : Window
             case "Split View":
                 BeautyPane.IsVisible = true;
                 ComparisonPane.IsVisible = true;
+                BeautyPane.SetValue(Grid.RowSpanProperty, 2);
+                ComparisonPane.SetValue(Grid.RowSpanProperty, 2);
                 AovPane.IsVisible = false;
                 PerformancePane.IsVisible = false;
                 break;
@@ -78,6 +80,7 @@ public sealed partial class ShellWindow : Window
         PerformancePane.IsVisible = true;
         BeautyPane.SetValue(Grid.ColumnSpanProperty, 1);
         BeautyPane.SetValue(Grid.RowSpanProperty, 1);
+        ComparisonPane.SetValue(Grid.RowSpanProperty, 1);
     }
 
     private void OnClosed(object? sender, EventArgs e)
