@@ -84,8 +84,7 @@ public sealed class VulkanRendererBackend : IRenderer
             var resolution = renderSurface?.Resolution ?? RenderResolution.Default;
             var handleKind = outletDescriptor?.NativeSurface.HandleKind ?? "unknown";
             var renderMode = renderSurface?.RenderMode;
-            var samplesPerPixel = renderSurface?.SamplesPerPixel ?? 0;
-            var maxBounces = renderSurface?.MaxBounces ?? 0;
+            var quality = renderSurface?.Quality ?? default;
             var enabledOutputs = renderSurface is null
                 ? "none"
                 : string.Join(", ", renderSurface.EnabledOutputs);
@@ -97,7 +96,7 @@ public sealed class VulkanRendererBackend : IRenderer
                 outletId,
                 renderSurface?.SurfaceId ?? "unbound",
                 "Renderer Frame Ready",
-                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}; mode {(renderMode?.ToString() ?? "UnknownMode")}, {samplesPerPixel} spp, {maxBounces} bounces, outputs: {enabledOutputs}; surface generation {generation}, accumulated frames {accumulatedFrames}, reconfigured {reconfigured.ToString().ToLowerInvariant()}.");
+                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}; mode {(renderMode?.ToString() ?? "UnknownMode")}, {quality.SamplesPerPixel} spp, {quality.MaxBounces} bounces, outputs: {enabledOutputs}; surface generation {generation}, accumulated frames {accumulatedFrames}, reconfigured {reconfigured.ToString().ToLowerInvariant()}.");
         }, cancellationToken);
     }
 
@@ -121,8 +120,7 @@ public sealed class VulkanRendererBackend : IRenderer
                 Descriptor.SceneId != descriptor.SceneId
                 || Descriptor.Resolution != descriptor.Resolution
                 || Descriptor.RenderMode != descriptor.RenderMode
-                || Descriptor.SamplesPerPixel != descriptor.SamplesPerPixel
-                || Descriptor.MaxBounces != descriptor.MaxBounces
+                || Descriptor.Quality != descriptor.Quality
                 || !Descriptor.EnabledOutputs.SequenceEqual(descriptor.EnabledOutputs);
 
             if (!requiresReset)

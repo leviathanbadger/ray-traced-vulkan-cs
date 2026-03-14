@@ -138,7 +138,10 @@ public sealed partial class ViewportCard : UserControl
             {
                 SurfaceSettingsRequested?.Invoke(
                     this,
-                    new ViewportSurfaceSettingsRequestedEventArgs(ViewId, SelectedRenderMode, samplesPerPixel, maxBounces));
+                    new ViewportSurfaceSettingsRequestedEventArgs(
+                        ViewId,
+                        SelectedRenderMode,
+                        new RenderQualitySettings(samplesPerPixel, maxBounces)));
             }
         };
     }

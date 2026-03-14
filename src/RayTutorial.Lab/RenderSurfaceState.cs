@@ -9,5 +9,4 @@ public sealed record RenderSurfaceState(
     RenderResolution Resolution,
     RenderMode RenderMode,
     IReadOnlyList<AovKind> EnabledOutputs,
-    int SamplesPerPixel,
-    int MaxBounces);
+    RenderQualitySettings Quality);

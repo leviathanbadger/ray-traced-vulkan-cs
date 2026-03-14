@@ -200,7 +200,7 @@ public sealed partial class ShellWindow : Window
             return;
         }
 
-        labState.ApplySurfaceSettingsToOutlet(e.ViewportId, e.RenderMode, e.SamplesPerPixel, e.MaxBounces);
+        labState.ApplySurfaceSettingsToOutlet(e.ViewportId, e.RenderMode, e.Quality);
     }
 
     private void SyncViewportCardsFromState()
@@ -238,8 +238,8 @@ public sealed partial class ShellWindow : Window
         card.SelectedAov = labState.GetSelectedSourceOutput(card.ViewId).ToString();
         card.SelectedPresentation = labState.GetPresentationMode(card.ViewId).ToString();
         card.SelectedRenderMode = surfaceState.RenderMode;
-        card.SelectedSamplesPerPixel = surfaceState.SamplesPerPixel.ToString(CultureInfo.InvariantCulture);
-        card.SelectedMaxBounces = surfaceState.MaxBounces.ToString(CultureInfo.InvariantCulture);
+        card.SelectedSamplesPerPixel = surfaceState.Quality.SamplesPerPixel.ToString(CultureInfo.InvariantCulture);
+        card.SelectedMaxBounces = surfaceState.Quality.MaxBounces.ToString(CultureInfo.InvariantCulture);
         card.SurfaceStatus = surfaceId == "lesson-main" ? "Shared Surface" : "Forked Surface";
         card.EnabledOutputsSummary = BuildEnabledOutputsSummary(surfaceState);
     }
@@ -247,7 +247,7 @@ public sealed partial class ShellWindow : Window
     private static string BuildEnabledOutputsSummary(RenderSurfaceState surfaceState)
     {
         var outputs = string.Join(", ", surfaceState.EnabledOutputs.Select(FormatAovLabel));
-        return $"{FormatRenderModeLabel(surfaceState.RenderMode)} | {surfaceState.SamplesPerPixel} spp | {surfaceState.MaxBounces} bounces | {outputs}";
+        return $"{FormatRenderModeLabel(surfaceState.RenderMode)} | {surfaceState.Quality.SamplesPerPixel} spp | {surfaceState.Quality.MaxBounces} bounces | {outputs}";
     }
 
     private static string FormatAovLabel(AovKind output)

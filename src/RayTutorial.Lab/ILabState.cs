@@ -32,7 +32,7 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 
     void EnsureOutputAvailableForOutlet(string outletId, AovKind output);
 
-    void ApplySurfaceSettingsToOutlet(string outletId, RenderMode renderMode, int samplesPerPixel, int maxBounces);
+    void ApplySurfaceSettingsToOutlet(string outletId, RenderMode renderMode, RenderQualitySettings quality);
 
     void BindOutletToSurface(string outletId, string surfaceId);
 

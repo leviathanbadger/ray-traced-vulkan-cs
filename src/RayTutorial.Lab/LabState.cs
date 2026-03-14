@@ -99,8 +99,7 @@ public sealed class LabState : ILabState
             surface.SceneId,
             surface.Resolution,
             surface.RenderMode,
-            surface.SamplesPerPixel,
-            surface.MaxBounces,
+            surface.Quality,
             surface.EnabledOutputs);
     }
 
@@ -155,16 +154,15 @@ public sealed class LabState : ILabState
             });
     }
 
-    public void ApplySurfaceSettingsToOutlet(string outletId, RenderMode renderMode, int samplesPerPixel, int maxBounces)
+    public void ApplySurfaceSettingsToOutlet(string outletId, RenderMode renderMode, RenderQualitySettings quality)
     {
         UpdateSurfaceForOutlet(
             outletId,
-            BuildSurfaceSettingsReason(renderMode, samplesPerPixel, maxBounces),
+            BuildSurfaceSettingsReason(renderMode, quality),
             currentSurface => currentSurface with
             {
                 RenderMode = renderMode,
-                SamplesPerPixel = samplesPerPixel,
-                MaxBounces = maxBounces
+                Quality = quality
             });
     }
 
@@ -207,8 +205,7 @@ public sealed class LabState : ILabState
             sharedRenderResolution,
             RenderMode.PathTracingPreview,
             DefaultEnabledOutputs,
-            8,
-            3);
+            new RenderQualitySettings(8, 3));
 
         renderOutletsById["beauty"] = new RenderOutletState("beauty", "lesson-main", AovKind.Beauty, PresentationMode.Raw);
         renderOutletsById["comparison"] = new RenderOutletState("comparison", "lesson-main", AovKind.Beauty, PresentationMode.Raw);
@@ -276,6 +273,6 @@ public sealed class LabState : ILabState
     private bool IsSurfaceSharedByOtherOutlets(string surfaceId, string outletId) =>
         renderOutletsById.Values.Any(outlet => outlet.OutletId != outletId && outlet.SurfaceId == surfaceId);
 
-    private static string BuildSurfaceSettingsReason(RenderMode renderMode, int samplesPerPixel, int maxBounces) =>
-        $"{renderMode.ToString().ToLowerInvariant()}-{samplesPerPixel}spp-{maxBounces}b";
+    private static string BuildSurfaceSettingsReason(RenderMode renderMode, RenderQualitySettings quality) =>
+        $"{renderMode.ToString().ToLowerInvariant()}-{quality.SamplesPerPixel}spp-{quality.MaxBounces}b";
 }

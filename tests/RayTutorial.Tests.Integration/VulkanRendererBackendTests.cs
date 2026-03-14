@@ -26,8 +26,7 @@ public sealed class VulkanRendererBackendTests
                 "PrimitiveDiagnostics",
                 new RenderResolution(1280, 720),
                 RenderMode.PathTracingPreview,
-                8,
-                3,
+                new RenderQualitySettings(8, 3),
                 [AovKind.Beauty, AovKind.Normal, AovKind.Variance, AovKind.InstanceId]),
             CancellationToken.None);
         await renderer.AttachRenderOutletAsync(
@@ -78,8 +77,7 @@ public sealed class VulkanRendererBackendTests
                 "PrimitiveDiagnostics",
                 new RenderResolution(1280, 720),
                 RenderMode.PathTracingPreview,
-                8,
-                3,
+                new RenderQualitySettings(8, 3),
                 [AovKind.Beauty, AovKind.Normal, AovKind.Variance, AovKind.InstanceId]),
             CancellationToken.None);
         await renderer.AttachRenderOutletAsync(
@@ -96,8 +94,7 @@ public sealed class VulkanRendererBackendTests
                 "PrimitiveDiagnostics",
                 new RenderResolution(1280, 720),
                 RenderMode.PathTracingReference,
-                64,
-                6,
+                new RenderQualitySettings(64, 6),
                 [AovKind.Beauty, AovKind.Normal, AovKind.Variance, AovKind.InstanceId]),
             CancellationToken.None);
         var secondFrame = await renderer.RenderFrameAsync("beauty", CancellationToken.None);
