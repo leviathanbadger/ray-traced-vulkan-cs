@@ -78,6 +78,8 @@ public sealed class LabState : ILabState
 
     public IReadOnlyCollection<RenderOutletState> RenderOutlets => renderOutletsById.Values;
 
+    public RenderSurfaceState GetRenderSurfaceState(string surfaceId) => renderSurfacesById[surfaceId];
+
     public void ApplyPreset(LabPreset preset)
     {
         SelectedLessonId = preset.LessonId;
@@ -127,8 +129,7 @@ public sealed class LabState : ILabState
 
     public void EnsureOutputAvailableForOutlet(string outletId, AovKind output)
     {
-        var outlet = renderOutletsById[outletId];
-        var surface = renderSurfacesById[outlet.SurfaceId];
+        var surface = renderSurfacesById[renderOutletsById[outletId].SurfaceId];
         if (surface.EnabledOutputs.Contains(output))
         {
             return;
@@ -138,19 +139,27 @@ public sealed class LabState : ILabState
             .Concat([output])
             .Distinct()
             .ToArray();
-        var outputSetId = BuildOutputSetId(expandedOutputs);
-        var forkedSurfaceId = $"{outletId}-{outputSetId}-{renderSurfacesById.Count}";
-        var forkedSurface = surface with
-        {
-            SurfaceId = forkedSurfaceId,
-            OutputSetId = outputSetId,
-            EnabledOutputs = expandedOutputs
-        };
+        UpdateSurfaceForOutlet(
+            outletId,
+            BuildOutputSetId(expandedOutputs),
+            currentSurface => currentSurface with
+            {
+                OutputSetId = BuildOutputSetId(expandedOutputs),
+                EnabledOutputs = expandedOutputs
+            });
+    }
 
-        renderSurfacesById[forkedSurfaceId] = forkedSurface;
-        renderOutletsById[outletId] = outlet with { SurfaceId = forkedSurfaceId };
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderSurfaces)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
+    public void ApplySurfaceSettingsToOutlet(string outletId, string renderMode, int samplesPerPixel, int maxBounces)
+    {
+        UpdateSurfaceForOutlet(
+            outletId,
+            BuildSurfaceSettingsReason(renderMode, samplesPerPixel, maxBounces),
+            currentSurface => currentSurface with
+            {
+                RenderMode = renderMode,
+                SamplesPerPixel = samplesPerPixel,
+                MaxBounces = maxBounces
+            });
     }
 
     public void BindOutletToSurface(string outletId, string surfaceId)
@@ -191,7 +200,6 @@ public sealed class LabState : ILabState
             "lesson-main",
             selectedSceneId,
             sharedRenderResolution,
-            "lesson-camera",
             "PathTracingPreview",
             "default",
             DefaultEnabledOutputs,
@@ -236,4 +244,34 @@ public sealed class LabState : ILabState
             enabledOutputs
                 .OrderBy(output => output.ToString(), StringComparer.Ordinal)
                 .Select(output => output.ToString().ToLowerInvariant()));
+
+    private void UpdateSurfaceForOutlet(string outletId, string forkReason, Func<RenderSurfaceState, RenderSurfaceState> updateSurface)
+    {
+        var outlet = renderOutletsById[outletId];
+        var currentSurface = renderSurfacesById[outlet.SurfaceId];
+        var updatedSurface = updateSurface(currentSurface);
+        if (updatedSurface == currentSurface)
+        {
+            return;
+        }
+
+        if (IsSurfaceSharedByOtherOutlets(outlet.SurfaceId, outletId))
+        {
+            var forkedSurfaceId = $"{outletId}-{forkReason}-{renderSurfacesById.Count}";
+            renderSurfacesById[forkedSurfaceId] = updatedSurface with { SurfaceId = forkedSurfaceId };
+            renderOutletsById[outletId] = outlet with { SurfaceId = forkedSurfaceId };
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderSurfaces)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
+            return;
+        }
+
+        renderSurfacesById[currentSurface.SurfaceId] = updatedSurface;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderSurfaces)));
+    }
+
+    private bool IsSurfaceSharedByOtherOutlets(string surfaceId, string outletId) =>
+        renderOutletsById.Values.Any(outlet => outlet.OutletId != outletId && outlet.SurfaceId == surfaceId);
+
+    private static string BuildSurfaceSettingsReason(string renderMode, int samplesPerPixel, int maxBounces) =>
+        $"{renderMode.ToLowerInvariant()}-{samplesPerPixel}spp-{maxBounces}b";
 }

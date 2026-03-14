@@ -33,6 +33,29 @@ public sealed partial class ViewportCard : UserControl
         "Emission"
     ];
 
+    private static readonly IReadOnlyList<string> DefaultRenderModeOptions =
+    [
+        "PathTracingPreview",
+        "PathTracingReference",
+        "HybridRayQuery"
+    ];
+
+    private static readonly IReadOnlyList<string> DefaultSamplesPerPixelOptions =
+    [
+        "1",
+        "8",
+        "32",
+        "64"
+    ];
+
+    private static readonly IReadOnlyList<string> DefaultMaxBounceOptions =
+    [
+        "1",
+        "3",
+        "6",
+        "8"
+    ];
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(Title), string.Empty);
 
@@ -75,6 +98,24 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<string?> SelectedOutputToEnableProperty =
         AvaloniaProperty.Register<ViewportCard, string?>(nameof(SelectedOutputToEnable));
 
+    public static readonly StyledProperty<IReadOnlyList<string>> RenderModeOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(RenderModeOptions), DefaultRenderModeOptions);
+
+    public static readonly StyledProperty<string> SelectedRenderModeProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedRenderMode), "PathTracingPreview");
+
+    public static readonly StyledProperty<IReadOnlyList<string>> SamplesPerPixelOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(SamplesPerPixelOptions), DefaultSamplesPerPixelOptions);
+
+    public static readonly StyledProperty<string> SelectedSamplesPerPixelProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedSamplesPerPixel), "8");
+
+    public static readonly StyledProperty<IReadOnlyList<string>> MaxBounceOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(MaxBounceOptions), DefaultMaxBounceOptions);
+
+    public static readonly StyledProperty<string> SelectedMaxBouncesProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedMaxBounces), "3");
+
     public ViewportCard()
     {
         InitializeComponent();
@@ -90,6 +131,16 @@ public sealed partial class ViewportCard : UserControl
                 ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "enable-output", SelectedOutputToEnable));
             }
         };
+        ApplySurfaceSettingsButton.Click += (_, _) =>
+        {
+            if (int.TryParse(SelectedSamplesPerPixel, out var samplesPerPixel)
+                && int.TryParse(SelectedMaxBounces, out var maxBounces))
+            {
+                SurfaceSettingsRequested?.Invoke(
+                    this,
+                    new ViewportSurfaceSettingsRequestedEventArgs(ViewId, SelectedRenderMode, samplesPerPixel, maxBounces));
+            }
+        };
     }
 
     public event EventHandler? SelectedAovChanged;
@@ -97,6 +148,8 @@ public sealed partial class ViewportCard : UserControl
     public event EventHandler? PresentationChanged;
 
     public event EventHandler<ViewportActionRequestedEventArgs>? ActionRequested;
+
+    public event EventHandler<ViewportSurfaceSettingsRequestedEventArgs>? SurfaceSettingsRequested;
 
     public string Title
     {
@@ -180,5 +233,41 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(SelectedOutputToEnableProperty);
         set => SetValue(SelectedOutputToEnableProperty, value);
+    }
+
+    public IReadOnlyList<string> RenderModeOptions
+    {
+        get => GetValue(RenderModeOptionsProperty);
+        set => SetValue(RenderModeOptionsProperty, value);
+    }
+
+    public string SelectedRenderMode
+    {
+        get => GetValue(SelectedRenderModeProperty);
+        set => SetValue(SelectedRenderModeProperty, value);
+    }
+
+    public IReadOnlyList<string> SamplesPerPixelOptions
+    {
+        get => GetValue(SamplesPerPixelOptionsProperty);
+        set => SetValue(SamplesPerPixelOptionsProperty, value);
+    }
+
+    public string SelectedSamplesPerPixel
+    {
+        get => GetValue(SelectedSamplesPerPixelProperty);
+        set => SetValue(SelectedSamplesPerPixelProperty, value);
+    }
+
+    public IReadOnlyList<string> MaxBounceOptions
+    {
+        get => GetValue(MaxBounceOptionsProperty);
+        set => SetValue(MaxBounceOptionsProperty, value);
+    }
+
+    public string SelectedMaxBounces
+    {
+        get => GetValue(SelectedMaxBouncesProperty);
+        set => SetValue(SelectedMaxBouncesProperty, value);
     }
 }

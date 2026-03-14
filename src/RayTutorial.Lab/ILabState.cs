@@ -18,6 +18,8 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 
     IReadOnlyCollection<RenderOutletState> RenderOutlets { get; }
 
+    RenderSurfaceState GetRenderSurfaceState(string surfaceId);
+
     void ApplyPreset(LabPreset preset);
 
     AovKind GetSelectedSourceOutput(string outletId);
@@ -29,6 +31,8 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
     void SetPresentationMode(string outletId, PresentationMode presentationMode);
 
     void EnsureOutputAvailableForOutlet(string outletId, AovKind output);
+
+    void ApplySurfaceSettingsToOutlet(string outletId, string renderMode, int samplesPerPixel, int maxBounces);
 
     void BindOutletToSurface(string outletId, string surfaceId);
 

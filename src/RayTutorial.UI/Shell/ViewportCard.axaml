@@ -32,6 +32,25 @@
               <TextBlock Classes="eyebrow" Text="{Binding SurfaceStatus, ElementName=Root}" />
               <TextBlock Text="{Binding EnabledOutputsSummary, ElementName=Root}" TextWrapping="Wrap" />
               <ComboBox
+                  x:Name="RenderModeSelector"
+                  ItemsSource="{Binding RenderModeOptions, ElementName=Root}"
+                  SelectedItem="{Binding SelectedRenderMode, ElementName=Root}" />
+              <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <ComboBox
+                    x:Name="SamplesPerPixelSelector"
+                    ItemsSource="{Binding SamplesPerPixelOptions, ElementName=Root}"
+                    SelectedItem="{Binding SelectedSamplesPerPixel, ElementName=Root}" />
+                <ComboBox
+                    x:Name="MaxBounceSelector"
+                    Grid.Column="1"
+                    ItemsSource="{Binding MaxBounceOptions, ElementName=Root}"
+                    SelectedItem="{Binding SelectedMaxBounces, ElementName=Root}" />
+              </Grid>
+              <Button
+                  x:Name="ApplySurfaceSettingsButton"
+                  Classes="toolbarButton"
+                  Content="Apply Surface Settings" />
+              <ComboBox
                   x:Name="EnableOutputSelector"
                   ItemsSource="{Binding AvailableOutputOptions, ElementName=Root}"
                   SelectedItem="{Binding SelectedOutputToEnable, ElementName=Root}" />
@@ -66,7 +85,7 @@
     </Border>
     <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="8">
       <Border Classes="miniChip">
-        <TextBlock Text="Camera Linked" />
+        <TextBlock Text="{Binding SelectedRenderMode, ElementName=Root}" />
       </Border>
       <Border Grid.Column="1" Classes="miniChip">
         <TextBlock Text="{Binding SelectedAov, ElementName=Root}" />

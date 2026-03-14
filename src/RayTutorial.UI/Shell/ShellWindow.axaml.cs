@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using RayTutorial.Domain;
 using RayTutorial.Lab;
 using RayTutorial.Rendering;
+using System.Globalization;
 using System.ComponentModel;
 
 namespace RayTutorial.UI.Shell;
@@ -45,6 +46,10 @@ public sealed partial class ShellWindow : Window
         ComparisonViewport.ActionRequested += OnViewportActionRequested;
         AovViewport.ActionRequested += OnViewportActionRequested;
         PerformanceViewport.ActionRequested += OnViewportActionRequested;
+        BeautyViewport.SurfaceSettingsRequested += OnViewportSurfaceSettingsRequested;
+        ComparisonViewport.SurfaceSettingsRequested += OnViewportSurfaceSettingsRequested;
+        AovViewport.SurfaceSettingsRequested += OnViewportSurfaceSettingsRequested;
+        PerformanceViewport.SurfaceSettingsRequested += OnViewportSurfaceSettingsRequested;
         SinglePaneButton.Click += (_, _) => shellViewModel.SelectedLayout = "Single Pane";
         SplitPaneButton.Click += (_, _) => shellViewModel.SelectedLayout = "Split View";
         QuadPaneButton.Click += (_, _) => shellViewModel.SelectedLayout = "Quad View";
@@ -188,6 +193,16 @@ public sealed partial class ShellWindow : Window
         }
     }
 
+    private void OnViewportSurfaceSettingsRequested(object? sender, ViewportSurfaceSettingsRequestedEventArgs e)
+    {
+        if (labState is null)
+        {
+            return;
+        }
+
+        labState.ApplySurfaceSettingsToOutlet(e.ViewportId, e.RenderMode, e.SamplesPerPixel, e.MaxBounces);
+    }
+
     private void SyncViewportCardsFromState()
     {
         if (labState is null)
@@ -209,26 +224,30 @@ public sealed partial class ShellWindow : Window
         }
 
         var surfaceId = labState.GetRenderSurfaceId(card.ViewId);
-        var surface = labState.GetRenderSurfaceDescriptor(surfaceId);
+        var surfaceDescriptor = labState.GetRenderSurfaceDescriptor(surfaceId);
+        var surfaceState = labState.GetRenderSurfaceState(surfaceId);
 
         card.RenderSurfaceId = surfaceId;
-        card.AovOptions = surface.EnabledOutputs.Select(output => output.ToString()).ToArray();
+        card.AovOptions = surfaceDescriptor.EnabledOutputs.Select(output => output.ToString()).ToArray();
         var availableOutputOptions = Enum.GetValues<AovKind>()
-            .Where(output => !surface.EnabledOutputs.Contains(output))
+            .Where(output => !surfaceDescriptor.EnabledOutputs.Contains(output))
             .Select(output => output.ToString())
             .ToArray();
         card.AvailableOutputOptions = availableOutputOptions;
         card.SelectedOutputToEnable = availableOutputOptions.Length > 0 ? availableOutputOptions[0] : null;
         card.SelectedAov = labState.GetSelectedSourceOutput(card.ViewId).ToString();
         card.SelectedPresentation = labState.GetPresentationMode(card.ViewId).ToString();
+        card.SelectedRenderMode = surfaceState.RenderMode;
+        card.SelectedSamplesPerPixel = surfaceState.SamplesPerPixel.ToString(CultureInfo.InvariantCulture);
+        card.SelectedMaxBounces = surfaceState.MaxBounces.ToString(CultureInfo.InvariantCulture);
         card.SurfaceStatus = surfaceId == "lesson-main" ? "Shared Surface" : "Forked Surface";
-        card.EnabledOutputsSummary = BuildEnabledOutputsSummary(surface.EnabledOutputs, card.SelectedPresentation);
+        card.EnabledOutputsSummary = BuildEnabledOutputsSummary(surfaceState);
     }
 
-    private static string BuildEnabledOutputsSummary(IReadOnlyList<AovKind> enabledOutputs, string presentationMode)
+    private static string BuildEnabledOutputsSummary(RenderSurfaceState surfaceState)
     {
-        var outputs = string.Join(", ", enabledOutputs.Select(FormatAovLabel));
-        return $"{presentationMode} view over: {outputs}";
+        var outputs = string.Join(", ", surfaceState.EnabledOutputs.Select(FormatAovLabel));
+        return $"{FormatRenderModeLabel(surfaceState.RenderMode)} | {surfaceState.SamplesPerPixel} spp | {surfaceState.MaxBounces} bounces | {outputs}";
     }
 
     private static string FormatAovLabel(AovKind output)
@@ -242,4 +261,8 @@ public sealed partial class ShellWindow : Window
                     .Select((character, index) => index > 0 && char.IsUpper(character) ? $" {character}" : character.ToString()))
         };
     }
+
+    private static string FormatRenderModeLabel(string renderMode) =>
+        string.Concat(
+            renderMode.Select((character, index) => index > 0 && char.IsUpper(character) ? $" {character}" : character.ToString()));
 }
