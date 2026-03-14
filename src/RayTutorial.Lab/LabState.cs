@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using RayTutorial.Domain;
+using RayTutorial.Rendering;
 
 namespace RayTutorial.Lab;
 
@@ -10,6 +11,7 @@ public sealed class LabState : ILabState
     private string selectedSceneId = string.Empty;
     private string selectedLayoutName = string.Empty;
     private AovKind selectedAov = AovKind.Beauty;
+    private RenderResolution sharedRenderResolution = RenderResolution.Default;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -37,6 +39,12 @@ public sealed class LabState : ILabState
         set => SetProperty(ref selectedAov, value);
     }
 
+    public RenderResolution SharedRenderResolution
+    {
+        get => sharedRenderResolution;
+        set => SetProperty(ref sharedRenderResolution, value);
+    }
+
     public void ApplyPreset(LabPreset preset)
     {
         SelectedLessonId = preset.LessonId;
@@ -44,6 +52,8 @@ public sealed class LabState : ILabState
         SelectedLayoutName = preset.LayoutName;
         SelectedAov = preset.DefaultAov;
     }
+
+    public string GetRenderSurfaceId(string outletId) => "lesson-main";
 
     private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {

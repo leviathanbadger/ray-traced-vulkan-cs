@@ -13,6 +13,9 @@ public sealed partial class ViewportHost : UserControl, IDisposable
     public static readonly StyledProperty<string> ViewportIdProperty =
         AvaloniaProperty.Register<ViewportHost, string>(nameof(ViewportId), string.Empty);
 
+    public static readonly StyledProperty<string> RenderSurfaceIdProperty =
+        AvaloniaProperty.Register<ViewportHost, string>(nameof(RenderSurfaceId), "lesson-main");
+
     public static readonly StyledProperty<IViewportHostService?> HostServiceProperty =
         AvaloniaProperty.Register<ViewportHost, IViewportHostService?>(nameof(HostService));
 
@@ -46,6 +49,12 @@ public sealed partial class ViewportHost : UserControl, IDisposable
         set => SetValue(HostServiceProperty, value);
     }
 
+    public string RenderSurfaceId
+    {
+        get => GetValue(RenderSurfaceIdProperty);
+        set => SetValue(RenderSurfaceIdProperty, value);
+    }
+
     public string StatusTitle
     {
         get => GetValue(StatusTitleProperty);
@@ -69,7 +78,7 @@ public sealed partial class ViewportHost : UserControl, IDisposable
 
         try
         {
-            var status = await HostService.AttachAsync(ViewportId, GetSurfaceDescriptor(), initializationCancellation.Token);
+            var status = await HostService.AttachAsync(GetOutletDescriptor(), initializationCancellation.Token);
             StatusTitle = status.Title;
             StatusDetail = status.Detail;
             StartRenderLoop();
@@ -119,7 +128,7 @@ public sealed partial class ViewportHost : UserControl, IDisposable
 
         try
         {
-            var status = await HostService.ResizeAsync(ViewportId, GetSurfaceDescriptor(), initializationCancellation.Token);
+            var status = await HostService.ResizeAsync(GetOutletDescriptor(), initializationCancellation.Token);
             StatusTitle = status.Title;
             StatusDetail = status.Detail;
         }
@@ -201,5 +210,10 @@ public sealed partial class ViewportHost : UserControl, IDisposable
             viewportSize.Height);
 
         return new NativeSurfaceDescriptor(handle, handleKind, bounds, viewportSize);
+    }
+
+    private RenderOutletDescriptor GetOutletDescriptor()
+    {
+        return new RenderOutletDescriptor(ViewportId, RenderSurfaceId, GetSurfaceDescriptor());
     }
 }

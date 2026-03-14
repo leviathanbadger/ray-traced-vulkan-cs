@@ -13,11 +13,13 @@ public interface IRenderer
 
     ValueTask LoadSceneAsync(SceneDescriptor scene, CancellationToken cancellationToken);
 
-    ValueTask AttachViewportAsync(string viewportId, NativeSurfaceDescriptor surfaceDescriptor, CancellationToken cancellationToken);
+    ValueTask ConfigureRenderSurfaceAsync(RenderSurfaceDescriptor surfaceDescriptor, CancellationToken cancellationToken);
 
-    ValueTask ResizeViewportAsync(string viewportId, NativeSurfaceDescriptor surfaceDescriptor, CancellationToken cancellationToken);
+    ValueTask AttachRenderOutletAsync(RenderOutletDescriptor outletDescriptor, CancellationToken cancellationToken);
 
-    ValueTask<RenderFrameResult> RenderFrameAsync(string viewportId, CancellationToken cancellationToken);
+    ValueTask ResizeRenderOutletAsync(RenderOutletDescriptor outletDescriptor, CancellationToken cancellationToken);
 
-    ValueTask DetachViewportAsync(string viewportId, CancellationToken cancellationToken);
+    ValueTask<RenderFrameResult> RenderFrameAsync(string outletId, CancellationToken cancellationToken);
+
+    ValueTask DetachRenderOutletAsync(string outletId, CancellationToken cancellationToken);
 }

@@ -108,6 +108,7 @@
                 Title="Beauty"
                 Subtitle="Interactive preview"
                 ViewId="beauty"
+                RenderSurfaceId="lesson-main"
                 Body="Primary pane for the lesson target state. This will host the Vulkan-backed viewport." />
           </Border>
 
@@ -117,6 +118,7 @@
                 Title="Comparison"
                 Subtitle="Preset delta"
                 ViewId="comparison"
+                RenderSurfaceId="lesson-main"
                 Body="Secondary pane for A/B comparisons such as low vs high sample count or raw vs denoised output." />
           </Border>
 
@@ -126,6 +128,7 @@
                 Title="AOV Inspector"
                 Subtitle="Diagnostic view"
                 ViewId="aov-inspector"
+                RenderSurfaceId="lesson-main"
                 Body="Dedicated pane for normals, albedo, variance, instance IDs, and other supporting outputs." />
           </Border>
 
@@ -135,6 +138,7 @@
                 Title="Performance Lens"
                 Subtitle="Cost and structure debug"
                 ViewId="performance-lens"
+                RenderSurfaceId="lesson-main"
                 Body="Reserved for traversal cost, BLAS/TLAS overlays, or compact GPU metrics views." />
           </Border>
         </Grid>

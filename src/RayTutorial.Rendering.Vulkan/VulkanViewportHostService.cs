@@ -30,34 +30,34 @@ public sealed class VulkanViewportHostService : IViewportHostService
     {
     }
 
-    public async Task<ViewportHostStatus> AttachAsync(string viewportId, NativeSurfaceDescriptor surfaceDescriptor, CancellationToken cancellationToken)
+    public async Task<ViewportHostStatus> AttachAsync(RenderOutletDescriptor outletDescriptor, CancellationToken cancellationToken)
     {
-        await EnsureSceneLoadedAsync(cancellationToken);
-        await renderer.AttachViewportAsync(viewportId, surfaceDescriptor, cancellationToken);
+        await EnsureSceneLoadedAsync(outletDescriptor.SurfaceId, cancellationToken);
+        await renderer.AttachRenderOutletAsync(outletDescriptor, cancellationToken);
         return new ViewportHostStatus(
             true,
-            "Viewport Attached",
-            $"{VulkanRendererBackend.BackendName} host attached at {surfaceDescriptor.ViewportSize.Width}x{surfaceDescriptor.ViewportSize.Height} on {surfaceDescriptor.HandleKind}.");
+            "Outlet Attached",
+            $"{VulkanRendererBackend.BackendName} outlet {outletDescriptor.OutletId} attached to shared surface {outletDescriptor.SurfaceId} with display size {outletDescriptor.NativeSurface.ViewportSize.Width}x{outletDescriptor.NativeSurface.ViewportSize.Height}.");
     }
 
-    public async Task<ViewportHostStatus> ResizeAsync(string viewportId, NativeSurfaceDescriptor surfaceDescriptor, CancellationToken cancellationToken)
+    public async Task<ViewportHostStatus> ResizeAsync(RenderOutletDescriptor outletDescriptor, CancellationToken cancellationToken)
     {
-        await renderer.ResizeViewportAsync(viewportId, surfaceDescriptor, cancellationToken);
+        await renderer.ResizeRenderOutletAsync(outletDescriptor, cancellationToken);
         return new ViewportHostStatus(
             true,
-            "Viewport Resized",
-            $"Renderer host resized {viewportId} to {surfaceDescriptor.ViewportSize.Width}x{surfaceDescriptor.ViewportSize.Height}.");
+            "Outlet Resized",
+            $"Presentation outlet {outletDescriptor.OutletId} resized to {outletDescriptor.NativeSurface.ViewportSize.Width}x{outletDescriptor.NativeSurface.ViewportSize.Height}; shared render resolution remains fixed.");
     }
 
-    public async Task<ViewportHostStatus> RenderFrameAsync(string viewportId, CancellationToken cancellationToken)
+    public async Task<ViewportHostStatus> RenderFrameAsync(string outletId, CancellationToken cancellationToken)
     {
-        var frame = await renderer.RenderFrameAsync(viewportId, cancellationToken);
+        var frame = await renderer.RenderFrameAsync(outletId, cancellationToken);
         return new ViewportHostStatus(true, frame.Title, frame.Detail);
     }
 
-    public async Task DetachAsync(string viewportId, CancellationToken cancellationToken)
+    public async Task DetachAsync(string outletId, CancellationToken cancellationToken)
     {
-        await renderer.DetachViewportAsync(viewportId, cancellationToken);
+        await renderer.DetachRenderOutletAsync(outletId, cancellationToken);
     }
 
     private async void OnLabStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -69,14 +69,14 @@ public sealed class VulkanViewportHostService : IViewportHostService
 
         try
         {
-            await EnsureSceneLoadedAsync(CancellationToken.None);
+            await EnsureSceneLoadedAsync(sceneSelectionState.GetRenderSurfaceId("beauty"), CancellationToken.None);
         }
         catch (OperationCanceledException)
         {
         }
     }
 
-    private async Task EnsureSceneLoadedAsync(CancellationToken cancellationToken)
+    private async Task EnsureSceneLoadedAsync(string surfaceId, CancellationToken cancellationToken)
     {
         await sceneLoadGate.WaitAsync(cancellationToken);
 
@@ -88,6 +88,9 @@ public sealed class VulkanViewportHostService : IViewportHostService
             }
 
             await renderer.LoadSceneAsync(scene, cancellationToken);
+            await renderer.ConfigureRenderSurfaceAsync(
+                new RenderSurfaceDescriptor(surfaceId, sceneSelectionState.SelectedSceneId, sceneSelectionState.SharedRenderResolution),
+                cancellationToken);
         }
         finally
         {

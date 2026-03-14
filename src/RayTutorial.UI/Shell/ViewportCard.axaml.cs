@@ -21,6 +21,9 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<IViewportHostService?> HostServiceProperty =
         AvaloniaProperty.Register<ViewportCard, IViewportHostService?>(nameof(HostService));
 
+    public static readonly StyledProperty<string> RenderSurfaceIdProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(RenderSurfaceId), "lesson-main");
+
     public ViewportCard()
     {
         InitializeComponent();
@@ -54,5 +57,11 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(HostServiceProperty);
         set => SetValue(HostServiceProperty, value);
+    }
+
+    public string RenderSurfaceId
+    {
+        get => GetValue(RenderSurfaceIdProperty);
+        set => SetValue(RenderSurfaceIdProperty, value);
     }
 }

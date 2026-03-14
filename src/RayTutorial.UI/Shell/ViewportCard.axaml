@@ -10,6 +10,7 @@
     <Border Grid.Row="2" Classes="viewportSurface">
       <shell:ViewportHost
           ViewportId="{Binding ViewId, ElementName=Root}"
+          RenderSurfaceId="{Binding RenderSurfaceId, ElementName=Root}"
           HostService="{Binding HostService, ElementName=Root}" />
     </Border>
     <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
