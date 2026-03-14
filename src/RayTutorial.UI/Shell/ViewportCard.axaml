@@ -45,14 +45,17 @@
           RenderSurfaceId="{Binding RenderSurfaceId, ElementName=Root}"
           HostService="{Binding HostService, ElementName=Root}" />
     </Border>
-    <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+    <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="8">
       <Border Classes="miniChip">
         <TextBlock Text="Camera Linked" />
       </Border>
       <Border Grid.Column="1" Classes="miniChip">
         <TextBlock Text="{Binding SelectedAov, ElementName=Root}" />
       </Border>
-      <TextBlock Grid.Column="2" HorizontalAlignment="Right" Classes="eyebrow" Text="{Binding SelectedPresentation, ElementName=Root}" />
+      <Border Grid.Column="2" Classes="miniChip">
+        <TextBlock Text="{Binding SurfaceStatus, ElementName=Root}" />
+      </Border>
+      <TextBlock Grid.Column="3" HorizontalAlignment="Right" Classes="eyebrow" Text="{Binding EnabledOutputsSummary, ElementName=Root}" />
     </Grid>
   </Grid>
 </UserControl>

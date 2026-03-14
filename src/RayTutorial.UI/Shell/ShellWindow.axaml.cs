@@ -200,8 +200,19 @@ public sealed partial class ShellWindow : Window
             return;
         }
 
-        card.RenderSurfaceId = labState.GetRenderSurfaceId(card.ViewId);
+        var surfaceId = labState.GetRenderSurfaceId(card.ViewId);
+        var surface = labState.GetRenderSurfaceDescriptor(surfaceId);
+
+        card.RenderSurfaceId = surfaceId;
         card.SelectedAov = labState.GetSelectedSourceOutput(card.ViewId).ToString();
         card.SelectedPresentation = labState.GetPresentationMode(card.ViewId).ToString();
+        card.SurfaceStatus = surfaceId == "lesson-main" ? "Shared Surface" : "Forked Surface";
+        card.EnabledOutputsSummary = BuildEnabledOutputsSummary(surface.EnabledOutputs, card.SelectedPresentation);
+    }
+
+    private static string BuildEnabledOutputsSummary(IReadOnlyList<AovKind> enabledOutputs, string presentationMode)
+    {
+        var outputs = string.Join(", ", enabledOutputs.Select(output => output.ToString()));
+        return $"{presentationMode} | {outputs}";
     }
 }

@@ -52,6 +52,12 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<string> SelectedPresentationProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedPresentation), "Raw");
 
+    public static readonly StyledProperty<string> SurfaceStatusProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SurfaceStatus), "Shared Surface");
+
+    public static readonly StyledProperty<string> EnabledOutputsSummaryProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(EnabledOutputsSummary), string.Empty);
+
     public ViewportCard()
     {
         InitializeComponent();
@@ -126,5 +132,17 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(SelectedPresentationProperty);
         set => SetValue(SelectedPresentationProperty, value);
+    }
+
+    public string SurfaceStatus
+    {
+        get => GetValue(SurfaceStatusProperty);
+        set => SetValue(SurfaceStatusProperty, value);
+    }
+
+    public string EnabledOutputsSummary
+    {
+        get => GetValue(EnabledOutputsSummaryProperty);
+        set => SetValue(EnabledOutputsSummaryProperty, value);
     }
 }
