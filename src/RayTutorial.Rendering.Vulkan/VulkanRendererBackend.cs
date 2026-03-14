@@ -71,12 +71,18 @@ public sealed class VulkanRendererBackend : IRenderer
             var loadedSceneName = loadedScene?.DisplayName ?? "No scene loaded";
             var resolution = renderSurface?.Resolution ?? RenderResolution.Default;
             var handleKind = outletDescriptor?.NativeSurface.HandleKind ?? "unknown";
+            var renderMode = renderSurface?.RenderMode ?? "UnknownMode";
+            var samplesPerPixel = renderSurface?.SamplesPerPixel ?? 0;
+            var maxBounces = renderSurface?.MaxBounces ?? 0;
+            var enabledOutputs = renderSurface is null
+                ? "none"
+                : string.Join(", ", renderSurface.EnabledOutputs);
 
             return new RenderFrameResult(
                 outletId,
                 renderSurface?.SurfaceId ?? "unbound",
                 "Renderer Frame Ready",
-                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}.");
+                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}; mode {renderMode}, {samplesPerPixel} spp, {maxBounces} bounces, outputs: {enabledOutputs}.");
         }, cancellationToken);
     }
 

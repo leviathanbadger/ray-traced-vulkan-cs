@@ -25,6 +25,9 @@ public sealed class VulkanRendererBackendTests
                 "lesson-main",
                 "PrimitiveDiagnostics",
                 new RenderResolution(1280, 720),
+                "PathTracingPreview",
+                8,
+                3,
                 [AovKind.Beauty, AovKind.Normal, AovKind.Variance, AovKind.InstanceId]),
             CancellationToken.None);
         await renderer.AttachRenderOutletAsync(
@@ -47,6 +50,9 @@ public sealed class VulkanRendererBackendTests
         Assert.Contains("1280x720", frame.Detail);
         Assert.Contains("PrimitiveDiagnostics", frame.Detail);
         Assert.Contains("win32", frame.Detail);
+        Assert.Contains("PathTracingPreview", frame.Detail);
+        Assert.Contains("8 spp", frame.Detail);
+        Assert.Contains("3 bounces", frame.Detail);
 
         await renderer.DetachRenderOutletAsync("beauty", CancellationToken.None);
     }

@@ -94,7 +94,14 @@ public sealed class LabState : ILabState
     public RenderSurfaceDescriptor GetRenderSurfaceDescriptor(string surfaceId)
     {
         var surface = renderSurfacesById[surfaceId];
-        return new RenderSurfaceDescriptor(surface.SurfaceId, surface.SceneId, surface.Resolution, surface.EnabledOutputs);
+        return new RenderSurfaceDescriptor(
+            surface.SurfaceId,
+            surface.SceneId,
+            surface.Resolution,
+            surface.RenderMode,
+            surface.SamplesPerPixel,
+            surface.MaxBounces,
+            surface.EnabledOutputs);
     }
 
     public bool IsOutputAvailable(string surfaceId, AovKind output) => renderSurfacesById[surfaceId].EnabledOutputs.Contains(output);
