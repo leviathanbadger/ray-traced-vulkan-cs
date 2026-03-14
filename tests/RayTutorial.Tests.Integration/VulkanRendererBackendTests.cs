@@ -52,6 +52,8 @@ public sealed class VulkanRendererBackendTests
         Assert.Contains("PathTracingPreview", frame.Detail);
         Assert.Contains("8 spp", frame.Detail);
         Assert.Contains("3 bounces", frame.Detail);
+        Assert.Contains("vk-placeholder-instance", frame.Detail);
+        Assert.Contains("attachments: Beauty, Normal, Variance, InstanceId", frame.Detail);
         Assert.Contains("surface generation 1", frame.Detail);
         Assert.Contains("accumulated frames 1", frame.Detail);
 
@@ -106,6 +108,7 @@ public sealed class VulkanRendererBackendTests
         Assert.Contains("PathTracingReference", secondFrame.Detail);
         Assert.Contains("64 spp", secondFrame.Detail);
         Assert.Contains("6 bounces", secondFrame.Detail);
+        Assert.Contains("attachments: Beauty, Normal, Variance, InstanceId", secondFrame.Detail);
 
         await renderer.DetachRenderOutletAsync("beauty", CancellationToken.None);
     }

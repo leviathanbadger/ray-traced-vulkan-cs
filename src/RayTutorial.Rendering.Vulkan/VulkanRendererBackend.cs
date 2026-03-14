@@ -6,8 +6,9 @@ namespace RayTutorial.Rendering.Vulkan;
 
 public sealed class VulkanRendererBackend : IRenderer
 {
-    private readonly ConcurrentDictionary<string, VulkanSurfaceState> renderSurfaces = new();
+    private readonly ConcurrentDictionary<string, VulkanSurfaceRuntimeState> renderSurfaces = new();
     private readonly ConcurrentDictionary<string, RenderOutletDescriptor> attachedOutlets = new();
+    private readonly VulkanBackendBootstrapState bootstrapState = VulkanBackendBootstrapState.CreatePlaceholder();
     private SceneDescriptor? loadedScene;
     private bool initialized;
 
@@ -51,7 +52,7 @@ public sealed class VulkanRendererBackend : IRenderer
         {
             renderSurfaces.AddOrUpdate(
                 surfaceDescriptor.SurfaceId,
-                surfaceId => VulkanSurfaceState.Create(surfaceDescriptor),
+                surfaceId => VulkanSurfaceRuntimeState.Create(surfaceDescriptor),
                 (_, existingState) => existingState.Reconfigure(surfaceDescriptor));
         }, cancellationToken);
     }
@@ -80,6 +81,7 @@ public sealed class VulkanRendererBackend : IRenderer
             }
 
             var renderSurface = renderSurfaceState?.Descriptor;
+            var surfaceResources = renderSurfaceState?.Resources;
             var loadedSceneName = loadedScene?.DisplayName ?? "No scene loaded";
             var resolution = renderSurface?.Resolution ?? RenderResolution.Default;
             var handleKind = outletDescriptor?.NativeSurface.HandleKind ?? "unknown";
@@ -91,51 +93,20 @@ public sealed class VulkanRendererBackend : IRenderer
             var generation = renderSurfaceState?.Generation ?? 0;
             var accumulatedFrames = renderSurfaceState?.AccumulatedFrames ?? 0;
             var reconfigured = renderSurfaceState?.WasReconfigured ?? false;
+            var attachments = surfaceResources is null
+                ? "none"
+                : string.Join(", ", surfaceResources.OutputAttachments);
 
             return new RenderFrameResult(
                 outletId,
                 renderSurface?.SurfaceId ?? "unbound",
                 "Renderer Frame Ready",
-                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}; mode {(renderMode?.ToString() ?? "UnknownMode")}, {quality.SamplesPerPixel} spp, {quality.MaxBounces} bounces, outputs: {enabledOutputs}; surface generation {generation}, accumulated frames {accumulatedFrames}, reconfigured {reconfigured.ToString().ToLowerInvariant()}.");
+                $"{BackendName} placeholder frame for {outletId} presenting shared surface {renderSurface?.SurfaceId ?? "unbound"} at render resolution {resolution.Width}x{resolution.Height} using {loadedSceneName} on {handleKind}; bootstrap {bootstrapState.InstanceName}/{bootstrapState.DeviceName}, mode {(renderMode?.ToString() ?? "UnknownMode")}, {quality.SamplesPerPixel} spp, {quality.MaxBounces} bounces, outputs: {enabledOutputs}; attachments: {attachments}; surface generation {generation}, accumulated frames {accumulatedFrames}, reconfigured {reconfigured.ToString().ToLowerInvariant()}.");
         }, cancellationToken);
     }
 
     public async ValueTask DetachRenderOutletAsync(string outletId, CancellationToken cancellationToken)
     {
         await Task.Run(() => attachedOutlets.TryRemove(outletId, out _), cancellationToken);
-    }
-
-    private sealed record VulkanSurfaceState(
-        RenderSurfaceDescriptor Descriptor,
-        int Generation,
-        int AccumulatedFrames,
-        bool WasReconfigured)
-    {
-        public static VulkanSurfaceState Create(RenderSurfaceDescriptor descriptor) =>
-            new(descriptor, 1, 0, true);
-
-        public VulkanSurfaceState Reconfigure(RenderSurfaceDescriptor descriptor)
-        {
-            var requiresReset =
-                Descriptor.SceneId != descriptor.SceneId
-                || Descriptor.Resolution != descriptor.Resolution
-                || Descriptor.RenderMode != descriptor.RenderMode
-                || Descriptor.Quality != descriptor.Quality
-                || !Descriptor.EnabledOutputs.SequenceEqual(descriptor.EnabledOutputs);
-
-            if (!requiresReset)
-            {
-                return this with { Descriptor = descriptor, WasReconfigured = false };
-            }
-
-            return new VulkanSurfaceState(descriptor, Generation + 1, 0, true);
-        }
-
-        public VulkanSurfaceState AdvanceFrame() =>
-            this with
-            {
-                AccumulatedFrames = AccumulatedFrames + 1,
-                WasReconfigured = false
-            };
     }
 }
