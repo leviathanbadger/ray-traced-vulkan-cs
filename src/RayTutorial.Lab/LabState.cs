@@ -125,6 +125,34 @@ public sealed class LabState : ILabState
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
     }
 
+    public void EnsureOutputAvailableForOutlet(string outletId, AovKind output)
+    {
+        var outlet = renderOutletsById[outletId];
+        var surface = renderSurfacesById[outlet.SurfaceId];
+        if (surface.EnabledOutputs.Contains(output))
+        {
+            return;
+        }
+
+        var expandedOutputs = surface.EnabledOutputs
+            .Concat([output])
+            .Distinct()
+            .ToArray();
+        var outputSetId = BuildOutputSetId(expandedOutputs);
+        var forkedSurfaceId = $"{outletId}-{outputSetId}-{renderSurfacesById.Count}";
+        var forkedSurface = surface with
+        {
+            SurfaceId = forkedSurfaceId,
+            OutputSetId = outputSetId,
+            EnabledOutputs = expandedOutputs
+        };
+
+        renderSurfacesById[forkedSurfaceId] = forkedSurface;
+        renderOutletsById[outletId] = outlet with { SurfaceId = forkedSurfaceId };
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderSurfaces)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
+    }
+
     public void BindOutletToSurface(string outletId, string surfaceId)
     {
         var outlet = renderOutletsById[outletId];
@@ -201,4 +229,11 @@ public sealed class LabState : ILabState
 
         return true;
     }
+
+    private static string BuildOutputSetId(IEnumerable<AovKind> enabledOutputs) =>
+        string.Join(
+            "-",
+            enabledOutputs
+                .OrderBy(output => output.ToString(), StringComparer.Ordinal)
+                .Select(output => output.ToString().ToLowerInvariant()));
 }

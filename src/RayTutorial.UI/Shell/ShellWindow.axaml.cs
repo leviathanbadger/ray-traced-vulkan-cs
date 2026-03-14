@@ -134,11 +134,7 @@ public sealed partial class ShellWindow : Window
 
         if (Enum.TryParse<AovKind>(card.SelectedAov, out var selectedAov))
         {
-            if (!labState.IsOutputAvailable(labState.GetRenderSurfaceId(card.ViewId), selectedAov))
-            {
-                return;
-            }
-
+            labState.EnsureOutputAvailableForOutlet(card.ViewId, selectedAov);
             labState.SetSelectedSourceOutput(card.ViewId, selectedAov);
         }
     }

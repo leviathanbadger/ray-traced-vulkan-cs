@@ -28,6 +28,8 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 
     void SetPresentationMode(string outletId, PresentationMode presentationMode);
 
+    void EnsureOutputAvailableForOutlet(string outletId, AovKind output);
+
     void BindOutletToSurface(string outletId, string surfaceId);
 
     void ForkSurfaceForOutlet(string outletId, string forkReason);

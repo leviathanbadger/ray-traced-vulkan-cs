@@ -1,5 +1,6 @@
 using RayTutorial.Domain;
 using RayTutorial.Lab;
+using RayTutorial.Rendering;
 
 namespace RayTutorial.Tests.Unit;
 
@@ -24,5 +25,46 @@ public sealed class LabStateTests
         Assert.Equal("CornellVariant", state.SelectedSceneId);
         Assert.Equal("Quad View", state.SelectedLayoutName);
         Assert.Equal(AovKind.Variance, state.SelectedAov);
+    }
+
+    [Fact]
+    public void EnsureOutputAvailableForOutletForksSurfaceWhenOutputIsMissing()
+    {
+        var state = new LabState();
+
+        state.EnsureOutputAvailableForOutlet("beauty", AovKind.Depth);
+
+        var surfaceId = state.GetRenderSurfaceId("beauty");
+        var comparisonSurfaceId = state.GetRenderSurfaceId("comparison");
+        var surface = state.GetRenderSurfaceDescriptor(surfaceId);
+
+        Assert.NotEqual("lesson-main", surfaceId);
+        Assert.Equal("lesson-main", comparisonSurfaceId);
+        Assert.Contains(AovKind.Depth, surface.EnabledOutputs);
+    }
+
+    [Fact]
+    public void EnsureOutputAvailableForOutletDoesNotForkWhenOutputAlreadyExists()
+    {
+        var state = new LabState();
+        var originalSurfaceId = state.GetRenderSurfaceId("beauty");
+
+        state.EnsureOutputAvailableForOutlet("beauty", AovKind.Beauty);
+
+        Assert.Equal(originalSurfaceId, state.GetRenderSurfaceId("beauty"));
+    }
+
+    [Fact]
+    public void PresentationModeStaysWithSharedSurfaceForRawVsDenoised()
+    {
+        var state = new LabState();
+        var sourceSurfaceId = state.GetRenderSurfaceId("beauty");
+
+        state.BindOutletToSurface("comparison", sourceSurfaceId);
+        state.SetSelectedSourceOutput("comparison", AovKind.Beauty);
+        state.SetPresentationMode("comparison", PresentationMode.Denoised);
+
+        Assert.Equal(sourceSurfaceId, state.GetRenderSurfaceId("comparison"));
+        Assert.Equal(PresentationMode.Denoised, state.GetPresentationMode("comparison"));
     }
 }
