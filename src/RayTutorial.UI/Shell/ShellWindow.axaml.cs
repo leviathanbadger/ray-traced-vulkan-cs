@@ -37,6 +37,10 @@ public sealed partial class ShellWindow : Window
         ComparisonViewport.SelectedAovChanged += OnViewportSelectedAovChanged;
         AovViewport.SelectedAovChanged += OnViewportSelectedAovChanged;
         PerformanceViewport.SelectedAovChanged += OnViewportSelectedAovChanged;
+        BeautyViewport.PresentationChanged += OnViewportPresentationChanged;
+        ComparisonViewport.PresentationChanged += OnViewportPresentationChanged;
+        AovViewport.PresentationChanged += OnViewportPresentationChanged;
+        PerformanceViewport.PresentationChanged += OnViewportPresentationChanged;
         BeautyViewport.ActionRequested += OnViewportActionRequested;
         ComparisonViewport.ActionRequested += OnViewportActionRequested;
         AovViewport.ActionRequested += OnViewportActionRequested;
@@ -130,7 +134,25 @@ public sealed partial class ShellWindow : Window
 
         if (Enum.TryParse<AovKind>(card.SelectedAov, out var selectedAov))
         {
-            labState.SetSelectedAov(card.ViewId, selectedAov);
+            if (!labState.IsOutputAvailable(labState.GetRenderSurfaceId(card.ViewId), selectedAov))
+            {
+                return;
+            }
+
+            labState.SetSelectedSourceOutput(card.ViewId, selectedAov);
+        }
+    }
+
+    private void OnViewportPresentationChanged(object? sender, EventArgs e)
+    {
+        if (labState is null || sender is not ViewportCard card)
+        {
+            return;
+        }
+
+        if (Enum.TryParse<PresentationMode>(card.SelectedPresentation, out var presentationMode))
+        {
+            labState.SetPresentationMode(card.ViewId, presentationMode);
         }
     }
 
@@ -144,13 +166,20 @@ public sealed partial class ShellWindow : Window
         switch (e.ActionId)
         {
             case "compare-raw-vs-denoised":
-                labState.ForkSurfaceForOutlet(e.ViewportId, "raw-vs-denoised");
+                var sourceSurfaceId = labState.GetRenderSurfaceId(e.ViewportId);
+                var sourceOutput = labState.GetSelectedSourceOutput(e.ViewportId);
+                labState.BindOutletToSurface("comparison", sourceSurfaceId);
+                labState.SetSelectedSourceOutput(e.ViewportId, sourceOutput);
+                labState.SetPresentationMode(e.ViewportId, PresentationMode.Raw);
+                labState.SetSelectedSourceOutput("comparison", sourceOutput);
+                labState.SetPresentationMode("comparison", PresentationMode.Denoised);
                 break;
             case "clone-surface":
                 labState.ForkSurfaceForOutlet(e.ViewportId, "clone");
                 break;
             case "inspect-tlas":
-                labState.SetSelectedAov(e.ViewportId, AovKind.InstanceId);
+                labState.SetSelectedSourceOutput(e.ViewportId, AovKind.InstanceId);
+                labState.SetPresentationMode(e.ViewportId, PresentationMode.Raw);
                 break;
         }
     }
@@ -176,6 +205,7 @@ public sealed partial class ShellWindow : Window
         }
 
         card.RenderSurfaceId = labState.GetRenderSurfaceId(card.ViewId);
-        card.SelectedAov = labState.GetSelectedAov(card.ViewId).ToString();
+        card.SelectedAov = labState.GetSelectedSourceOutput(card.ViewId).ToString();
+        card.SelectedPresentation = labState.GetPresentationMode(card.ViewId).ToString();
     }
 }

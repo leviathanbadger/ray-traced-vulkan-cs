@@ -20,9 +20,15 @@ public interface ILabState : INotifyPropertyChanged, ISceneSelectionState
 
     void ApplyPreset(LabPreset preset);
 
-    AovKind GetSelectedAov(string outletId);
+    AovKind GetSelectedSourceOutput(string outletId);
 
-    void SetSelectedAov(string outletId, AovKind aov);
+    PresentationMode GetPresentationMode(string outletId);
+
+    void SetSelectedSourceOutput(string outletId, AovKind output);
+
+    void SetPresentationMode(string outletId, PresentationMode presentationMode);
+
+    void BindOutletToSurface(string outletId, string surfaceId);
 
     void ForkSurfaceForOutlet(string outletId, string forkReason);
 }

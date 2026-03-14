@@ -1,6 +1,7 @@
 using RayTutorial.Rendering;
 using RayTutorial.Rendering.Vulkan;
 using RayTutorial.Scene;
+using RayTutorial.Domain;
 
 namespace RayTutorial.Tests.Integration;
 
@@ -20,7 +21,11 @@ public sealed class VulkanRendererBackendTests
                 RayTutorial.Domain.CoordinateSystem.HoudiniStyle),
             CancellationToken.None);
         await renderer.ConfigureRenderSurfaceAsync(
-            new RenderSurfaceDescriptor("lesson-main", "PrimitiveDiagnostics", new RenderResolution(1280, 720)),
+            new RenderSurfaceDescriptor(
+                "lesson-main",
+                "PrimitiveDiagnostics",
+                new RenderResolution(1280, 720),
+                [AovKind.Beauty, AovKind.Normal, AovKind.Variance, AovKind.InstanceId]),
             CancellationToken.None);
         await renderer.AttachRenderOutletAsync(
             new RenderOutletDescriptor(

@@ -16,6 +16,12 @@ public sealed partial class ViewportCard : UserControl
         "InstanceId"
     ];
 
+    private static readonly IReadOnlyList<string> DefaultPresentationOptions =
+    [
+        "Raw",
+        "Denoised"
+    ];
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(Title), string.Empty);
 
@@ -40,16 +46,25 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<string> SelectedAovProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedAov), "Beauty");
 
+    public static readonly StyledProperty<IReadOnlyList<string>> PresentationOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(PresentationOptions), DefaultPresentationOptions);
+
+    public static readonly StyledProperty<string> SelectedPresentationProperty =
+        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedPresentation), "Raw");
+
     public ViewportCard()
     {
         InitializeComponent();
         AovSelector.SelectionChanged += (_, _) => SelectedAovChanged?.Invoke(this, EventArgs.Empty);
+        PresentationSelector.SelectionChanged += (_, _) => PresentationChanged?.Invoke(this, EventArgs.Empty);
         CompareActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "compare-raw-vs-denoised"));
         InspectTlasActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "inspect-tlas"));
         CloneSurfaceActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "clone-surface"));
     }
 
     public event EventHandler? SelectedAovChanged;
+
+    public event EventHandler? PresentationChanged;
 
     public event EventHandler<ViewportActionRequestedEventArgs>? ActionRequested;
 
@@ -99,5 +114,17 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(SelectedAovProperty);
         set => SetValue(SelectedAovProperty, value);
+    }
+
+    public IReadOnlyList<string> PresentationOptions
+    {
+        get => GetValue(PresentationOptionsProperty);
+        set => SetValue(PresentationOptionsProperty, value);
+    }
+
+    public string SelectedPresentation
+    {
+        get => GetValue(SelectedPresentationProperty);
+        set => SetValue(SelectedPresentationProperty, value);
     }
 }

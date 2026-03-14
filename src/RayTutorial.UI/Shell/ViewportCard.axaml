@@ -5,7 +5,7 @@
     xmlns:shell="clr-namespace:RayTutorial.UI.Shell"
     x:Name="Root">
   <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
-    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
       <StackPanel Spacing="2">
         <TextBlock Classes="viewportTitle" Text="{Binding Title, ElementName=Root}" />
         <TextBlock Classes="viewportSubtitle" Text="{Binding Subtitle, ElementName=Root}" />
@@ -18,7 +18,14 @@
           ItemsSource="{Binding AovOptions, ElementName=Root}"
           SelectedItem="{Binding SelectedAov, ElementName=Root}" />
 
-      <Button Grid.Column="2" Classes="toolbarButton" Content="Actions">
+      <ComboBox
+          x:Name="PresentationSelector"
+          Grid.Column="2"
+          Width="110"
+          ItemsSource="{Binding PresentationOptions, ElementName=Root}"
+          SelectedItem="{Binding SelectedPresentation, ElementName=Root}" />
+
+      <Button Grid.Column="3" Classes="toolbarButton" Content="Actions">
         <Button.Flyout>
           <Flyout Placement="BottomEdgeAlignedRight">
             <StackPanel MinWidth="220" Spacing="8">
@@ -45,7 +52,7 @@
       <Border Grid.Column="1" Classes="miniChip">
         <TextBlock Text="{Binding SelectedAov, ElementName=Root}" />
       </Border>
-      <TextBlock Grid.Column="2" HorizontalAlignment="Right" Classes="eyebrow" Text="{Binding Body, ElementName=Root}" />
+      <TextBlock Grid.Column="2" HorizontalAlignment="Right" Classes="eyebrow" Text="{Binding SelectedPresentation, ElementName=Root}" />
     </Grid>
   </Grid>
 </UserControl>

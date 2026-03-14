@@ -7,6 +7,15 @@ namespace RayTutorial.Lab;
 
 public sealed class LabState : ILabState
 {
+    private static readonly IReadOnlyList<AovKind> DefaultEnabledOutputs =
+    [
+        AovKind.Beauty,
+        AovKind.Albedo,
+        AovKind.Normal,
+        AovKind.Variance,
+        AovKind.InstanceId
+    ];
+
     private readonly Dictionary<string, RenderSurfaceState> renderSurfacesById = new();
     private readonly Dictionary<string, RenderOutletState> renderOutletsById = new();
     private string selectedLessonId = string.Empty;
@@ -83,20 +92,48 @@ public sealed class LabState : ILabState
     public RenderSurfaceDescriptor GetRenderSurfaceDescriptor(string surfaceId)
     {
         var surface = renderSurfacesById[surfaceId];
-        return new RenderSurfaceDescriptor(surface.SurfaceId, surface.SceneId, surface.Resolution);
+        return new RenderSurfaceDescriptor(surface.SurfaceId, surface.SceneId, surface.Resolution, surface.EnabledOutputs);
     }
 
-    public AovKind GetSelectedAov(string outletId) => renderOutletsById[outletId].SelectedAov;
+    public bool IsOutputAvailable(string surfaceId, AovKind output) => renderSurfacesById[surfaceId].EnabledOutputs.Contains(output);
 
-    public void SetSelectedAov(string outletId, AovKind aov)
+    public AovKind GetSelectedSourceOutput(string outletId) => renderOutletsById[outletId].SourceOutput;
+
+    public PresentationMode GetPresentationMode(string outletId) => renderOutletsById[outletId].PresentationMode;
+
+    public void SetSelectedSourceOutput(string outletId, AovKind output)
     {
         var outlet = renderOutletsById[outletId];
-        if (outlet.SelectedAov == aov)
+        if (outlet.SourceOutput == output)
         {
             return;
         }
 
-        renderOutletsById[outletId] = outlet with { SelectedAov = aov };
+        renderOutletsById[outletId] = outlet with { SourceOutput = output };
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
+    }
+
+    public void SetPresentationMode(string outletId, PresentationMode presentationMode)
+    {
+        var outlet = renderOutletsById[outletId];
+        if (outlet.PresentationMode == presentationMode)
+        {
+            return;
+        }
+
+        renderOutletsById[outletId] = outlet with { PresentationMode = presentationMode };
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
+    }
+
+    public void BindOutletToSurface(string outletId, string surfaceId)
+    {
+        var outlet = renderOutletsById[outletId];
+        if (outlet.SurfaceId == surfaceId)
+        {
+            return;
+        }
+
+        renderOutletsById[outletId] = outlet with { SurfaceId = surfaceId };
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
     }
 
@@ -129,13 +166,14 @@ public sealed class LabState : ILabState
             "lesson-camera",
             "PathTracingPreview",
             "default",
+            DefaultEnabledOutputs,
             8,
             3);
 
-        renderOutletsById["beauty"] = new RenderOutletState("beauty", "lesson-main", AovKind.Beauty);
-        renderOutletsById["comparison"] = new RenderOutletState("comparison", "lesson-main", AovKind.Beauty);
-        renderOutletsById["aov-inspector"] = new RenderOutletState("aov-inspector", "lesson-main", AovKind.Variance);
-        renderOutletsById["performance-lens"] = new RenderOutletState("performance-lens", "lesson-main", AovKind.InstanceId);
+        renderOutletsById["beauty"] = new RenderOutletState("beauty", "lesson-main", AovKind.Beauty, PresentationMode.Raw);
+        renderOutletsById["comparison"] = new RenderOutletState("comparison", "lesson-main", AovKind.Beauty, PresentationMode.Raw);
+        renderOutletsById["aov-inspector"] = new RenderOutletState("aov-inspector", "lesson-main", AovKind.Variance, PresentationMode.Raw);
+        renderOutletsById["performance-lens"] = new RenderOutletState("performance-lens", "lesson-main", AovKind.InstanceId, PresentationMode.Raw);
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderSurfaces)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RenderOutlets)));
