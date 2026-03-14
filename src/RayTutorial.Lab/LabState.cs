@@ -151,12 +151,11 @@ public sealed class LabState : ILabState
             BuildOutputSetId(expandedOutputs),
             currentSurface => currentSurface with
             {
-                OutputSetId = BuildOutputSetId(expandedOutputs),
                 EnabledOutputs = expandedOutputs
             });
     }
 
-    public void ApplySurfaceSettingsToOutlet(string outletId, string renderMode, int samplesPerPixel, int maxBounces)
+    public void ApplySurfaceSettingsToOutlet(string outletId, RenderMode renderMode, int samplesPerPixel, int maxBounces)
     {
         UpdateSurfaceForOutlet(
             outletId,
@@ -188,8 +187,7 @@ public sealed class LabState : ILabState
         var forkedSurfaceId = $"{outletId}-{forkReason}-{renderSurfacesById.Count}";
         var forkedSurface = sourceSurface with
         {
-            SurfaceId = forkedSurfaceId,
-            OutputSetId = forkReason
+            SurfaceId = forkedSurfaceId
         };
 
         renderSurfacesById[forkedSurfaceId] = forkedSurface;
@@ -207,8 +205,7 @@ public sealed class LabState : ILabState
             "lesson-main",
             selectedSceneId,
             sharedRenderResolution,
-            "PathTracingPreview",
-            "default",
+            RenderMode.PathTracingPreview,
             DefaultEnabledOutputs,
             8,
             3);
@@ -279,6 +276,6 @@ public sealed class LabState : ILabState
     private bool IsSurfaceSharedByOtherOutlets(string surfaceId, string outletId) =>
         renderOutletsById.Values.Any(outlet => outlet.OutletId != outletId && outlet.SurfaceId == surfaceId);
 
-    private static string BuildSurfaceSettingsReason(string renderMode, int samplesPerPixel, int maxBounces) =>
-        $"{renderMode.ToLowerInvariant()}-{samplesPerPixel}spp-{maxBounces}b";
+    private static string BuildSurfaceSettingsReason(RenderMode renderMode, int samplesPerPixel, int maxBounces) =>
+        $"{renderMode.ToString().ToLowerInvariant()}-{samplesPerPixel}spp-{maxBounces}b";
 }

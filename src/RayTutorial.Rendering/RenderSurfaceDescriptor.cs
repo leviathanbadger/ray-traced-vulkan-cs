@@ -6,7 +6,7 @@ public sealed record RenderSurfaceDescriptor(
     string SurfaceId,
     string SceneId,
     RenderResolution Resolution,
-    string RenderMode,
+    RenderMode RenderMode,
     int SamplesPerPixel,
     int MaxBounces,
     IReadOnlyList<AovKind> EnabledOutputs);

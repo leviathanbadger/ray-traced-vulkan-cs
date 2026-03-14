@@ -7,8 +7,7 @@ public sealed record RenderSurfaceState(
     string SurfaceId,
     string SceneId,
     RenderResolution Resolution,
-    string RenderMode,
-    string OutputSetId,
+    RenderMode RenderMode,
     IReadOnlyList<AovKind> EnabledOutputs,
     int SamplesPerPixel,
     int MaxBounces);

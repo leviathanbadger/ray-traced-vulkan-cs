@@ -33,11 +33,11 @@ public sealed partial class ViewportCard : UserControl
         "Emission"
     ];
 
-    private static readonly IReadOnlyList<string> DefaultRenderModeOptions =
+    private static readonly IReadOnlyList<RenderMode> DefaultRenderModeOptions =
     [
-        "PathTracingPreview",
-        "PathTracingReference",
-        "HybridRayQuery"
+        RenderMode.PathTracingPreview,
+        RenderMode.PathTracingReference,
+        RenderMode.HybridRayQuery
     ];
 
     private static readonly IReadOnlyList<string> DefaultSamplesPerPixelOptions =
@@ -98,11 +98,11 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<string?> SelectedOutputToEnableProperty =
         AvaloniaProperty.Register<ViewportCard, string?>(nameof(SelectedOutputToEnable));
 
-    public static readonly StyledProperty<IReadOnlyList<string>> RenderModeOptionsProperty =
-        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(RenderModeOptions), DefaultRenderModeOptions);
+    public static readonly StyledProperty<IReadOnlyList<RenderMode>> RenderModeOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<RenderMode>>(nameof(RenderModeOptions), DefaultRenderModeOptions);
 
-    public static readonly StyledProperty<string> SelectedRenderModeProperty =
-        AvaloniaProperty.Register<ViewportCard, string>(nameof(SelectedRenderMode), "PathTracingPreview");
+    public static readonly StyledProperty<RenderMode> SelectedRenderModeProperty =
+        AvaloniaProperty.Register<ViewportCard, RenderMode>(nameof(SelectedRenderMode), RenderMode.PathTracingPreview);
 
     public static readonly StyledProperty<IReadOnlyList<string>> SamplesPerPixelOptionsProperty =
         AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(SamplesPerPixelOptions), DefaultSamplesPerPixelOptions);
@@ -235,13 +235,13 @@ public sealed partial class ViewportCard : UserControl
         set => SetValue(SelectedOutputToEnableProperty, value);
     }
 
-    public IReadOnlyList<string> RenderModeOptions
+    public IReadOnlyList<RenderMode> RenderModeOptions
     {
         get => GetValue(RenderModeOptionsProperty);
         set => SetValue(RenderModeOptionsProperty, value);
     }
 
-    public string SelectedRenderMode
+    public RenderMode SelectedRenderMode
     {
         get => GetValue(SelectedRenderModeProperty);
         set => SetValue(SelectedRenderModeProperty, value);

@@ -1,8 +1,10 @@
+using RayTutorial.Rendering;
+
 namespace RayTutorial.UI.Shell;
 
 public sealed class ViewportSurfaceSettingsRequestedEventArgs : EventArgs
 {
-    public ViewportSurfaceSettingsRequestedEventArgs(string viewportId, string renderMode, int samplesPerPixel, int maxBounces)
+    public ViewportSurfaceSettingsRequestedEventArgs(string viewportId, RenderMode renderMode, int samplesPerPixel, int maxBounces)
     {
         ViewportId = viewportId;
         RenderMode = renderMode;
@@ -12,7 +14,7 @@ public sealed class ViewportSurfaceSettingsRequestedEventArgs : EventArgs
 
     public string ViewportId { get; }
 
-    public string RenderMode { get; }
+    public RenderMode RenderMode { get; }
 
     public int SamplesPerPixel { get; }
 

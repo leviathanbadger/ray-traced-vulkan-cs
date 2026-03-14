@@ -73,7 +73,7 @@ public sealed class LabStateTests
     {
         var state = new LabState();
 
-        state.ApplySurfaceSettingsToOutlet("beauty", "PathTracingReference", 64, 6);
+        state.ApplySurfaceSettingsToOutlet("beauty", RenderMode.PathTracingReference, 64, 6);
 
         var beautySurfaceId = state.GetRenderSurfaceId("beauty");
         var comparisonSurfaceId = state.GetRenderSurfaceId("comparison");
@@ -81,7 +81,7 @@ public sealed class LabStateTests
 
         Assert.NotEqual("lesson-main", beautySurfaceId);
         Assert.Equal("lesson-main", comparisonSurfaceId);
-        Assert.Equal("PathTracingReference", beautySurface.RenderMode);
+        Assert.Equal(RenderMode.PathTracingReference, beautySurface.RenderMode);
         Assert.Equal(64, beautySurface.SamplesPerPixel);
         Assert.Equal(6, beautySurface.MaxBounces);
     }
@@ -93,11 +93,11 @@ public sealed class LabStateTests
         state.ForkSurfaceForOutlet("beauty", "clone");
         var dedicatedSurfaceId = state.GetRenderSurfaceId("beauty");
 
-        state.ApplySurfaceSettingsToOutlet("beauty", "HybridRayQuery", 32, 1);
+        state.ApplySurfaceSettingsToOutlet("beauty", RenderMode.HybridRayQuery, 32, 1);
 
         Assert.Equal(dedicatedSurfaceId, state.GetRenderSurfaceId("beauty"));
         var surface = state.GetRenderSurfaceState(dedicatedSurfaceId);
-        Assert.Equal("HybridRayQuery", surface.RenderMode);
+        Assert.Equal(RenderMode.HybridRayQuery, surface.RenderMode);
         Assert.Equal(32, surface.SamplesPerPixel);
         Assert.Equal(1, surface.MaxBounces);
     }

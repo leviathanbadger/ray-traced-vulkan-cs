@@ -262,7 +262,7 @@ public sealed partial class ShellWindow : Window
         };
     }
 
-    private static string FormatRenderModeLabel(string renderMode) =>
+    private static string FormatRenderModeLabel(RenderMode renderMode) =>
         string.Concat(
-            renderMode.Select((character, index) => index > 0 && char.IsUpper(character) ? $" {character}" : character.ToString()));
+            renderMode.ToString().Select((character, index) => index > 0 && char.IsUpper(character) ? $" {character}" : character.ToString()));
 }
