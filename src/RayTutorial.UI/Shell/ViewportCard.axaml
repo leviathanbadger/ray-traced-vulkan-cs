@@ -5,7 +5,7 @@
     xmlns:shell="clr-namespace:RayTutorial.UI.Shell"
     x:Name="Root">
   <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
-    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
       <StackPanel Spacing="2">
         <TextBlock Classes="viewportTitle" Text="{Binding Title, ElementName=Root}" />
         <TextBlock Classes="viewportSubtitle" Text="{Binding Subtitle, ElementName=Root}" />
@@ -25,7 +25,26 @@
           ItemsSource="{Binding PresentationOptions, ElementName=Root}"
           SelectedItem="{Binding SelectedPresentation, ElementName=Root}" />
 
-      <Button Grid.Column="3" Classes="toolbarButton" Content="Actions">
+      <Button Grid.Column="3" Classes="toolbarButton" Content="Surface">
+        <Button.Flyout>
+          <Flyout Placement="BottomEdgeAlignedRight">
+            <StackPanel MinWidth="240" Spacing="8">
+              <TextBlock Classes="eyebrow" Text="{Binding SurfaceStatus, ElementName=Root}" />
+              <TextBlock Text="{Binding EnabledOutputsSummary, ElementName=Root}" TextWrapping="Wrap" />
+              <ComboBox
+                  x:Name="EnableOutputSelector"
+                  ItemsSource="{Binding AvailableOutputOptions, ElementName=Root}"
+                  SelectedItem="{Binding SelectedOutputToEnable, ElementName=Root}" />
+              <Button
+                  x:Name="EnableOutputButton"
+                  Classes="toolbarButton"
+                  Content="Enable Output for This Pane" />
+            </StackPanel>
+          </Flyout>
+        </Button.Flyout>
+      </Button>
+
+      <Button Grid.Column="4" Classes="toolbarButton" Content="Actions">
         <Button.Flyout>
           <Flyout Placement="BottomEdgeAlignedRight">
             <StackPanel MinWidth="220" Spacing="8">

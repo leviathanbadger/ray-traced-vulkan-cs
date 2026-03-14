@@ -22,6 +22,17 @@ public sealed partial class ViewportCard : UserControl
         "Denoised"
     ];
 
+    private static readonly IReadOnlyList<string> DefaultAvailableOutputOptions =
+    [
+        "Depth",
+        "WorldPosition",
+        "DirectDiffuse",
+        "IndirectDiffuse",
+        "DirectSpecular",
+        "IndirectSpecular",
+        "Emission"
+    ];
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(Title), string.Empty);
 
@@ -58,6 +69,12 @@ public sealed partial class ViewportCard : UserControl
     public static readonly StyledProperty<string> EnabledOutputsSummaryProperty =
         AvaloniaProperty.Register<ViewportCard, string>(nameof(EnabledOutputsSummary), string.Empty);
 
+    public static readonly StyledProperty<IReadOnlyList<string>> AvailableOutputOptionsProperty =
+        AvaloniaProperty.Register<ViewportCard, IReadOnlyList<string>>(nameof(AvailableOutputOptions), DefaultAvailableOutputOptions);
+
+    public static readonly StyledProperty<string?> SelectedOutputToEnableProperty =
+        AvaloniaProperty.Register<ViewportCard, string?>(nameof(SelectedOutputToEnable));
+
     public ViewportCard()
     {
         InitializeComponent();
@@ -66,6 +83,13 @@ public sealed partial class ViewportCard : UserControl
         CompareActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "compare-raw-vs-denoised"));
         InspectTlasActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "inspect-tlas"));
         CloneSurfaceActionButton.Click += (_, _) => ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "clone-surface"));
+        EnableOutputButton.Click += (_, _) =>
+        {
+            if (!string.IsNullOrWhiteSpace(SelectedOutputToEnable))
+            {
+                ActionRequested?.Invoke(this, new ViewportActionRequestedEventArgs(ViewId, "enable-output", SelectedOutputToEnable));
+            }
+        };
     }
 
     public event EventHandler? SelectedAovChanged;
@@ -144,5 +168,17 @@ public sealed partial class ViewportCard : UserControl
     {
         get => GetValue(EnabledOutputsSummaryProperty);
         set => SetValue(EnabledOutputsSummaryProperty, value);
+    }
+
+    public IReadOnlyList<string> AvailableOutputOptions
+    {
+        get => GetValue(AvailableOutputOptionsProperty);
+        set => SetValue(AvailableOutputOptionsProperty, value);
+    }
+
+    public string? SelectedOutputToEnable
+    {
+        get => GetValue(SelectedOutputToEnableProperty);
+        set => SetValue(SelectedOutputToEnableProperty, value);
     }
 }

@@ -177,6 +177,14 @@ public sealed partial class ShellWindow : Window
                 labState.SetSelectedSourceOutput(e.ViewportId, AovKind.InstanceId);
                 labState.SetPresentationMode(e.ViewportId, PresentationMode.Raw);
                 break;
+            case "enable-output":
+                if (Enum.TryParse<AovKind>(e.ActionValue, out var outputToEnable))
+                {
+                    labState.EnsureOutputAvailableForOutlet(e.ViewportId, outputToEnable);
+                    labState.SetSelectedSourceOutput(e.ViewportId, outputToEnable);
+                    labState.SetPresentationMode(e.ViewportId, PresentationMode.Raw);
+                }
+                break;
         }
     }
 
@@ -204,6 +212,13 @@ public sealed partial class ShellWindow : Window
         var surface = labState.GetRenderSurfaceDescriptor(surfaceId);
 
         card.RenderSurfaceId = surfaceId;
+        card.AovOptions = surface.EnabledOutputs.Select(output => output.ToString()).ToArray();
+        var availableOutputOptions = Enum.GetValues<AovKind>()
+            .Where(output => !surface.EnabledOutputs.Contains(output))
+            .Select(output => output.ToString())
+            .ToArray();
+        card.AvailableOutputOptions = availableOutputOptions;
+        card.SelectedOutputToEnable = availableOutputOptions.Length > 0 ? availableOutputOptions[0] : null;
         card.SelectedAov = labState.GetSelectedSourceOutput(card.ViewId).ToString();
         card.SelectedPresentation = labState.GetPresentationMode(card.ViewId).ToString();
         card.SurfaceStatus = surfaceId == "lesson-main" ? "Shared Surface" : "Forked Surface";
@@ -212,7 +227,19 @@ public sealed partial class ShellWindow : Window
 
     private static string BuildEnabledOutputsSummary(IReadOnlyList<AovKind> enabledOutputs, string presentationMode)
     {
-        var outputs = string.Join(", ", enabledOutputs.Select(output => output.ToString()));
-        return $"{presentationMode} | {outputs}";
+        var outputs = string.Join(", ", enabledOutputs.Select(FormatAovLabel));
+        return $"{presentationMode} view over: {outputs}";
+    }
+
+    private static string FormatAovLabel(AovKind output)
+    {
+        return output switch
+        {
+            AovKind.InstanceId => "Instance ID",
+            _ => string.Concat(
+                output
+                    .ToString()
+                    .Select((character, index) => index > 0 && char.IsUpper(character) ? $" {character}" : character.ToString()))
+        };
     }
 }
